@@ -1,0 +1,347 @@
+{
+	"FridgeUTS": {
+		"stages": [
+			{
+				"index": 1,
+				"id": "50K",
+				"temperature": 46,
+				"coolingPower": 10
+			},
+			{
+				"index": 2,
+				"id": "4K",
+				"temperature": 3.94,
+				"coolingPower": 0.5
+			},
+			{
+				"index": 3,
+				"id": "Still",
+				"temperature": 1.227,
+				"coolingPower": 0.03
+			},
+			{
+				"index": 4,
+				"id": "CP",
+				"temperature": 0.15,
+				"coolingPower": 0.0003
+			},
+			{
+				"index": 5,
+				"id": "MXC",
+				"temperature": 0.02,
+				"coolingPower": 0.00002
+			}
+		],
+		"cables": [
+			{
+				"id": "219-CuNi-CuNi",
+				"diameters": [
+					0.00051,
+					0.00167,
+					0.00219
+				],
+				"thermalConductivityValue": 0.000063,
+				"rho": 3.75e-7,
+				"bivariateCableData": [
+					{
+						"frequency": 0.5,
+						"attenuation": 1.6
+					},
+					{
+						"frequency": 1,
+						"attenuation": 2.3
+					},
+					{
+						"frequency": 5,
+						"attenuation": 5.1
+					},
+					{
+						"frequency": 10,
+						"attenuation": 7.2
+					},
+					{
+						"frequency": 20,
+						"attenuation": 10.2
+					}
+				]
+			},
+			{
+				"id": "219-SS-SS",
+				"diameters": [
+					0.00051,
+					0.00167,
+					0.00219
+				],
+				"thermalConductivityValue": 0.000043,
+				"rho": 7.2e-7,
+				"bivariateCableData": [
+					{
+						"frequency": 0.5,
+						"attenuation": 1.9
+					},
+					{
+						"frequency": 1,
+						"attenuation": 2.6
+					},
+					{
+						"frequency": 5,
+						"attenuation": 5.9
+					},
+					{
+						"frequency": 10,
+						"attenuation": 8.3
+					},
+					{
+						"frequency": 20,
+						"attenuation": 11.7
+					}
+				]
+			},
+			{
+				"id": "119-AgCuNi-CuNi",
+				"diameters": [
+					0.000287,
+					0.00094,
+					0.00119
+				],
+				"thermalConductivityValue": 0.000104,
+				"rho": 3.75e-7,
+				"bivariateCableData": [
+					{
+						"frequency": 0.5,
+						"attenuation": 0.7
+					},
+					{
+						"frequency": 1,
+						"attenuation": 1
+					},
+					{
+						"frequency": 5,
+						"attenuation": 2.3
+					},
+					{
+						"frequency": 10,
+						"attenuation": 3.3
+					},
+					{
+						"frequency": 20,
+						"attenuation": 4.6
+					}
+				]
+			},
+			{
+				"id": "119-NbTi-NbTi",
+				"diameters": [
+					0.000287,
+					0.00094,
+					0.00119
+				],
+				"thermalConductivityValue": 0.00000754,
+				"rho": 0,
+				"bivariateCableData": [
+					{
+						"frequency": 0.5,
+						"attenuation": 0
+					},
+					{
+						"frequency": 1,
+						"attenuation": 0
+					},
+					{
+						"frequency": 5,
+						"attenuation": 0
+					},
+					{
+						"frequency": 10,
+						"attenuation": 0
+					},
+					{
+						"frequency": 20,
+						"attenuation": 0
+					}
+				]
+			}
+		],
+		"lines": [
+			{
+				"id": "flux",
+				"signalType": "Flux",
+				"currentType": "AC",
+				"signalPower": 0,
+				"signalFrequency": 6,
+				"inputCurrent": 0.02,
+				"count": 14
+			},
+			{
+				"id": "drive",
+				"signalType": "Drive",
+				"currentType": "AC",
+				"signalPower": 0.00031622776601683794,
+				"signalFrequency": 6,
+				"inputCurrent": 0,
+				"count": 14
+			},
+			{
+				"id": "output",
+				"signalType": "Output",
+				"currentType": "DC",
+				"signalPower": 0,
+				"signalFrequency": 6,
+				"inputCurrent": 0,
+				"count": 4
+			}
+		],
+		"segments": [
+			{
+				"cableId": "219-SS-SS",
+				"lineId": "drive",
+				"stageId": "50K",
+				"innerThermalisation": "auto",
+				"dielectricThermalisation": "auto",
+				"outerThermalisation": "auto",
+				"length": 0.236,
+				"attenuation": 0
+			},
+			{
+				"cableId": "219-SS-SS",
+				"lineId": "drive",
+				"stageId": "4K",
+				"innerThermalisation": "auto",
+				"dielectricThermalisation": "auto",
+				"outerThermalisation": "auto",
+				"length": 0.337,
+				"attenuation": 60
+			},
+			{
+				"cableId": "219-SS-SS",
+				"lineId": "drive",
+				"stageId": "Still",
+				"innerThermalisation": "auto",
+				"dielectricThermalisation": "auto",
+				"outerThermalisation": "auto",
+				"length": 0.3,
+				"attenuation": 0
+			},
+			{
+				"cableId": "219-SS-SS",
+				"lineId": "drive",
+				"stageId": "CP",
+				"innerThermalisation": "auto",
+				"dielectricThermalisation": "auto",
+				"outerThermalisation": "auto",
+				"length": 0.15,
+				"attenuation": 0
+			},
+			{
+				"cableId": "219-SS-SS",
+				"lineId": "drive",
+				"stageId": "MXC",
+				"innerThermalisation": "on",
+				"dielectricThermalisation": "on",
+				"outerThermalisation": "auto",
+				"length": 0.222,
+				"attenuation": 0
+			},
+			{
+				"cableId": "219-CuNi-CuNi",
+				"lineId": "flux",
+				"stageId": "50K",
+				"innerThermalisation": "off",
+				"dielectricThermalisation": "off",
+				"outerThermalisation": "auto",
+				"length": 0.236,
+				"attenuation": 4
+			},
+			{
+				"cableId": "219-CuNi-CuNi",
+				"lineId": "flux",
+				"stageId": "4K",
+				"innerThermalisation": "auto",
+				"dielectricThermalisation": "auto",
+				"outerThermalisation": "auto",
+				"length": 0.337,
+				"attenuation": 16
+			},
+			{
+				"cableId": "219-CuNi-CuNi",
+				"lineId": "flux",
+				"stageId": "Still",
+				"innerThermalisation": "auto",
+				"dielectricThermalisation": "auto",
+				"outerThermalisation": "auto",
+				"length": 0.3,
+				"attenuation": 0
+			},
+			{
+				"cableId": "219-CuNi-CuNi",
+				"lineId": "flux",
+				"stageId": "CP",
+				"innerThermalisation": "auto",
+				"dielectricThermalisation": "auto",
+				"outerThermalisation": "auto",
+				"length": 0.15,
+				"attenuation": 0
+			},
+			{
+				"cableId": "219-CuNi-CuNi",
+				"lineId": "flux",
+				"stageId": "MXC",
+				"innerThermalisation": "on",
+				"dielectricThermalisation": "on",
+				"outerThermalisation": "auto",
+				"length": 0.222,
+				"attenuation": 0
+			},
+			{
+				"cableId": "119-AgCuNi-CuNi",
+				"lineId": "output",
+				"stageId": "50K",
+				"innerThermalisation": "on",
+				"dielectricThermalisation": "on",
+				"outerThermalisation": "on",
+				"length": 0.236,
+				"attenuation": 0
+			},
+			{
+				"cableId": "119-AgCuNi-CuNi",
+				"lineId": "output",
+				"stageId": "4K",
+				"innerThermalisation": "on",
+				"dielectricThermalisation": "on",
+				"outerThermalisation": "on",
+				"length": 0.337,
+				"attenuation": 0
+			},
+			{
+				"cableId": "119-NbTi-NbTi",
+				"lineId": "output",
+				"stageId": "Still",
+				"innerThermalisation": "off",
+				"dielectricThermalisation": "off",
+				"outerThermalisation": "on",
+				"length": 0.25,
+				"attenuation": 0
+			},
+			{
+				"cableId": "119-NbTi-NbTi",
+				"lineId": "output",
+				"stageId": "CP",
+				"innerThermalisation": "off",
+				"dielectricThermalisation": "off",
+				"outerThermalisation": "on",
+				"length": 0.17,
+				"attenuation": 0
+			},
+			{
+				"cableId": "119-NbTi-NbTi",
+				"lineId": "output",
+				"stageId": "MXC",
+				"innerThermalisation": "on",
+				"dielectricThermalisation": "on",
+				"outerThermalisation": "on",
+				"length": 0.14,
+				"attenuation": 0
+			}
+		]
+	}
+}

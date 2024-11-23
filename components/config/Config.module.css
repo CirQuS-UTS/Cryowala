@@ -1,0 +1,119 @@
+/* Sean's Styles */
+.BODY {
+	min-height: 100vh;
+	margin: 0;
+	padding: 0;
+	background: linear-gradient(to bottom,
+			transparent,
+			rgb(var(--background-end-rgb))) rgb(var(--background-start-rgb));
+	font-family: Arial, sans-serif;
+	/* Set a default font */
+	line-height: 1.6;
+	/* Adjust line height for better readability */
+	display: flex;
+	justify-content: center;
+	/* Center content horizontally */
+	align-items: center;
+	/* Center content vertically */
+}
+
+.HEADING {
+	color: rgb(59, 130, 246);
+	/* Change to a different color (blue) */
+	font-size: 1.2rem;
+	/* Increase font size */
+}
+
+/* Left Side (Configure Fridge) */
+.CONFIGUREBOX {
+	flex: 1;
+	/* Fill the available space on the left */
+	padding: 0.5em;
+	background-color: #fff;
+	border-radius: 8px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+	margin: 0.5em 0;
+}
+
+/* Form Styles */
+.FORM {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	max-width: 1200px;
+	margin: 0 auto;
+	/* Center the form horizontally */
+}
+
+.LABEL {
+	white-space: nowrap;
+	margin-bottom: 0.5em;
+	font-weight: bold;
+	color: #000000;
+	font-size: 0.8em;
+	padding: 0.2em;
+}
+
+.INPUT,
+.SELECT {
+	color: #000000;
+	font-weight: normal;
+	width: 100%;
+	padding: 2px;
+	border: 1px solid #ccc;
+	border-radius: 4px;
+	margin-top: 5px;
+	font-size: .7em;
+}
+
+.SELECT {
+	padding-top: 3px;
+	padding-bottom: 3px;
+}
+
+/* Make disabled fields darker */
+.INPUT:disabled,
+.SELECT:disabled {
+	background-color: #dddddd;
+	cursor: not-allowed;
+}
+
+.INVALID_INPUT {
+	background-color: rgba(255, 0, 0, 0.2);
+	box-shadow: 0 0 5px 1px red;
+}
+
+.UNCONFIRMED_INPUT {
+	background-color: rgba(255, 115, 0, 0.2);
+	box-shadow: 0 0 5px 1px orange;
+}
+
+.INVALID_INPUT:focus-visible {
+	outline: none;
+}
+
+/* Submit and Reset Buttons */
+.BUTTON {
+	background-color: #007bff;
+	color: #fff;
+	border: none;
+	border-radius: 4px;
+	padding: 2px 4px;
+	font-size: 10px;
+	cursor: pointer;
+	margin-right: 10px;
+}
+
+.BUTTON[type="RESET"] {
+	background-color: #ff6b6b;
+	/* Change to a different color (red) */
+}
+
+.BUTTON:hover {
+	background-color: rgb(45, 55, 71);
+	/* Darken the background color on hover */
+}
+
+.BUTTON.INPUT {
+	padding: 2px;
+}

@@ -1,0 +1,64 @@
+{
+    "stages": {
+        "title": "Stages",
+        "index": "Index: Defines the order in which the stages are organised.",
+        "stage_names": "Defines the Stage Names",
+        "tempertures": "Defines the Temperatures",
+        "cooling_powers": "Defines the Cooling Powers",
+        "add_stage": "Adds another Stage to the Fridge.",
+        "remove_stage": "Removes the specified Stage from the Fridge."
+    },
+    "cables": {
+        "title": "Cables",
+        "cable": "Defines the Cable",
+        "thermal_conductivity": "Defines the Thermal Conductivity",
+        "resistivity": "Defines the Resistivity",
+        "innerPinDiameter": "Defines the Inner Pin Diameter",
+        "dielectricDiameter": "Defines the Dielectric Diameter",
+        "outerConductorDiameter": "Defines the Outer Condunctor Diameter",
+        "add_cable": "Adds another Cable to the Fridge.",
+        "remove_cable": "Removes the specified Cable from the Fridge.",
+        "cable_attenuation_points": {
+            "title": "Cable Attenuation Points",
+            "cable": "Defines the Cable",
+            "load_data": "Import CSV Data from a File",
+            "view_data": "View Cable Attenuation and Frequency Data"
+        }
+    },
+    "lines": {
+        "title": "Lines",
+        "line_name": "Defines the Line Name",
+        "signal_type": "Defines the Signal Type",
+        "line_count": "Defines the Line Count",
+        "current_type": "Defines the Current Type",
+        "signal_power": "Defines the Signal Power",
+        "signal_frequency": "Defines the Signal Frequency",
+        "input_current": "Defines the Input Current",
+        "add_line": "Adds another Line to the Fridge.",
+        "remove_line": "Removes the specified Line from the Fridge."
+    },
+    "segments": {
+        "cable_types": {
+            "title": "Segment Cable Types",
+            "stage": "Defines the Stage",
+            "line": "Defines the Line"
+        },
+        "lengths": {
+            "title": "Segment Lengths",
+            "stage": "Defines the Stage",
+            "line": "Defines the Line"
+        },
+        "attenuations": {
+            "title": "Segment Attenuations",
+            "stage": "Defines the Stage",
+            "line": "Defines the Line"
+        },
+        "line_thermalisation": {
+            "title": "Line Thermalisation",
+            "stage": "Defines the Stage",
+            "inner": "Defines the Inner Thermalisation",
+            "dielectric": "Defines the Dielectric Thermalisation",
+            "outer": "Defines the Outer Thermalisation"
+        }
+    }
+}

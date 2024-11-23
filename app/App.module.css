@@ -1,0 +1,173 @@
+.INPUT {
+    width: 40%;
+    padding: 8px 8px 8px 8px;
+    margin: 12px 0px 0px 0px;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 0px 8px 8px 0px;
+    box-sizing: border-box;
+}
+
+.SBLABEL {
+    width: 40%;
+    background-color: #333;
+    text-wrap: nowrap;
+    border: none;
+    color: white;
+    padding: 9px 8px 8px 8px;
+    margin: 12px 0px 0px 0px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 8px 0px 0px 8px;
+}
+
+.BUTTON {
+    background-color: #080808;
+    border: none;
+    color: white;
+    padding: 15px 40px;
+    margin-top: 12px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 8px;
+    /* box-shadow: rgba(0, 0, 0, 0.3) 0px 19px 38px, rgba(0, 0, 0, 0.22) 0px 15px 12px; */
+}
+
+.BUTTON:active {
+    cursor: progress;
+}
+
+.CHECKBOX {
+    padding: 8px 8px;
+    margin: 8px 8px;
+    border-radius: 4px;
+}
+
+.TITLE {
+    font-size: 150%;
+}
+
+.TD {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 1px;
+}
+
+.TC {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 1px;
+}
+
+.TDN {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 1px 16px;
+}
+
+.TCN {
+    border: 1px solid #dddddd;
+    text-align: center;
+    padding: 1px 16px;
+}
+
+.UL2 {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    display: flex;
+    width: 100%;
+}
+
+.LI2 {
+    float: left;
+    flex-grow: 1;
+
+}
+
+.LI2 .A {
+    display: block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    width: 100%;
+}
+
+.LI2 .B {
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+    background-color: white;
+    width: 100%;
+}
+
+.LI2 .A:hover {
+    background-color: #111;
+}
+
+
+.GRAPHBUTTONON {
+    background-color: #080808;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    width: 50%;
+    margin-top: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 16px 16px 0px 0px;
+}
+
+.GRAPHBUTTONOFF {
+    background-color: #333;
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    width: 50%;
+    margin-top: 5px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    border-radius: 16px;
+}
+
+.COLLAPSIBLE {
+    display: block;
+    overflow: hidden;
+    transition: height 0.2s ease-in-out;
+}
+
+.CONSTTOOLTIP {
+    position: relative;
+    display: inline-block;
+    border-bottom: 1px dotted black;
+}
+
+.CONSTTOOLTIPTEXT {
+    display: none;
+    background: #C8C8C8;
+    /* margin-left: 28px; */
+    padding: 10px;
+    position: absolute;
+    z-index: 1;
+    left: -15%;
+    width: 130%;
+    height: fit-content;
+    overflow-y: auto;
+}
+
+.CONSTTOOLTIP:hover .CONSTTOOLTIPTEXT {
+    display: block;
+}
