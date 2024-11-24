@@ -5,7 +5,10 @@
 	"build": {
 		"context": "..",
 		"dockerfile": "../Dockerfile",
-		"target": "development"
+		"target": "development",
+		"args": {
+			"network": "host"
+		}
 	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
