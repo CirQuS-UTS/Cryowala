@@ -622,9 +622,6 @@ export function sweepModel2D(model: CryoModelInterface, fridge: FridgeConfig, li
                         return sum;
                     });
 
-                    // account for still plate target temperature
-                    totalTemp[2] = Math.max(30e-3, totalTemp[2]);
-
                     lineNames = [];
                     data.forEach((d) => lineNames.push({ type: d.type, name: d.line.id, signalType: d.line.signalType }));
 

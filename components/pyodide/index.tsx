@@ -219,18 +219,18 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
             },
         ];
 
-        // const still = Math.max(heatLoads[2], 3e-2)
-        heatLoads[2] = Math.max(heatLoads[2], 3e-2);
+        // only works for 5 stage fridge where the middle stage is the still stage.
+        const heatLoadsLocal = heatLoads.map((h, i) => (i == 2) ? Math.max(heatLoads[i], 3e-2) : h);
 
         const errors: string[] = [];
 
         for (let i = 0; i < heatLoadLimits.length; i++) {
             if (
-                heatLoads[i] < heatLoadLimits[i].lowerLimit ||
-                heatLoads[i] > heatLoadLimits[i].upperLimit
+                heatLoadsLocal[i] < heatLoadLimits[i].lowerLimit ||
+                heatLoadsLocal[i] > heatLoadLimits[i].upperLimit
             ) {
                 errors.push(
-                    `Heat Load ${heatLoads[i]} exceeds the range ` +
+                    `Heat Load ${heatLoadsLocal[i]} exceeds the range ` +
                     `[${heatLoadLimits[i].lowerLimit},` +
                     ` ${heatLoadLimits[i].upperLimit}]` +
                     ` for stage ${heatLoadLimits[i].stage}\n`
@@ -238,10 +238,8 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
             };
         }
 
-        if (errors.length > 0 || heatLoads.some((t) => isNaN(t))) {
-            if (errors.length > 0) {
-                console.error(errors.join(''));
-            }
+        if (errors.length > 0) {
+            console.error(errors.join(''));
             return this.nanValueArray(heatLoads);
         }
 
