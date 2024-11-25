@@ -3,6 +3,7 @@ import { FridgeProvider } from '@/components/config/context'
 import './globals.css'
 import NavBar from "@/components/navbar";
 import { PythonRuntimeProvider } from '@/lib/pythonrt';
+import { FeatureFlagProvider } from '@/components/config/featureFlagContext';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -19,8 +20,10 @@ export default function RootLayout({
       <body>
         <PythonRuntimeProvider>
           <FridgeProvider>
+            <FeatureFlagProvider>
               <NavBar />
               {children}
+            </FeatureFlagProvider>
           </FridgeProvider>
         </PythonRuntimeProvider>
       </body>
