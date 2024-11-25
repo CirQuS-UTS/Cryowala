@@ -14,11 +14,11 @@ export interface TooltipProps {
   data: string | undefined
 }
 export function Tooltip({ data, children }: PropsWithChildren<TooltipProps>): ReactNode {
+  const [opened, { close, open }] = useDisclosure(false);
+  
   if (!data) {
     return <>{children}</>;
   }
-
-  const [opened, { close, open }] = useDisclosure(false);
 
   return (
     <Popover position="bottom" withArrow shadow="md" opened={opened}>
