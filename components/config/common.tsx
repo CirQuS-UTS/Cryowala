@@ -1,6 +1,7 @@
 import { PropsWithChildren, ReactNode } from "react";
 import { ButtonColumn, ButtonColumnProps } from "@/components/inputs/button";
 import styles from "@/components/config/Config.module.css";
+import { Tooltip } from "@/lib/tooltip";
 
 export type DeleteButtonColumnProps<T> = Omit<ButtonColumnProps<T>, "message">
 export function DeleteButtonColumn<T>({ data, label, onClick, style, ...props }: DeleteButtonColumnProps<T>): ReactNode {
@@ -39,11 +40,15 @@ export function FormGroup({ title, tooltip, buttonLabel, buttonTooltip, onAddCli
   return (
     <>
       <div className="flex flex-row justify-between">
-        <h1 className={styles.HEADING} title={tooltip} style={{ textDecoration: 'underline dotted' }}>{title}</h1>
+        <Tooltip data={tooltip}>
+          <h1 className={styles.HEADING} style={{ textDecoration: 'underline dotted' }}>{title}</h1>
+        </Tooltip>
         {onAddClicked && buttonLabel &&
-          <button className={styles.BUTTON} title={buttonTooltip} onClick={onAddClicked} style={{ padding: "0 2.5em", margin: "0", textDecoration: 'underline dotted' }}>
-            {buttonLabel}
-          </button>
+          <Tooltip data={buttonTooltip}>
+            <button className={styles.BUTTON} onClick={onAddClicked} style={{ padding: "1em 2.5em", margin: "0", textDecoration: 'underline dotted' }}>
+              {buttonLabel}
+            </button>
+          </Tooltip>
         }
       </div>
       <div className="flex flex-row ">

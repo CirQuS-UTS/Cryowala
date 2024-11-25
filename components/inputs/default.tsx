@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
+import { Tooltip } from "@/lib/tooltip";
 import styles from "@/components/config/Config.module.css";
 
 export type InputColumnProps<T> = JSX.IntrinsicElements["input"] & {
@@ -9,11 +10,13 @@ export type InputColumnProps<T> = JSX.IntrinsicElements["input"] & {
   propGenerator?: (index: number, item: T, value: string) => JSX.IntrinsicElements["input"],
   tooltip?: string,
 }
-export function InputColumn<T>({ label, tooltip = undefined, data, valueGetter, valueSetter, propGenerator, ...props }: InputColumnProps<T>): ReactNode {
+export function InputColumn<T>({ label, tooltip, data, valueGetter, valueSetter, propGenerator, ...props }: InputColumnProps<T>): ReactNode {
   // no text wrap on label
   return (
     <label className={styles.LABEL}>
-      <h1 title={tooltip} style={{ textDecoration: 'underline dotted' }}>{label}</h1>
+      <Tooltip data={tooltip}>
+        <h1 style={{ textDecoration: 'underline dotted' }}>{label}</h1>
+      </Tooltip>
       {data.map((item: T, index: number) => (
         <div key={index} className="px-1">
           <InputCell<T> datum={item}
