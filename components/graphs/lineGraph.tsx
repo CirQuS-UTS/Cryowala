@@ -389,11 +389,11 @@ function LineGraph({ data, fullData, stage, graphID, type, xLabel = "X-Axis", yL
         <div className={`group flex flex-row relative w-[${width}] h-[${height}]`}>
             <button
                 className="hidden group-hover:block absolute top-4 right-10 bg-zinc-800 text-white px-2 rounded-lg"
-                onClick={() => exportFile(svgOutput, String(type + "-" + stage + ".svg"))}
+                onClick={() => exportFile(svgOutput, String(((stage == 'Noise') ? "" : type + "-") + stage + "-graph.svg"))}
             >SVG</button>
             <button
                 className="hidden group-hover:block absolute top-4 right-[5.5rem] bg-zinc-800 text-white px-2 rounded-lg"
-                onClick={() => exportFile(csvOutput, String(type + "-" + stage + ".csv"))}
+                onClick={() => exportFile(csvOutput, String(((stage == 'Noise') ? "" : type + "-") + stage + "-values.csv"))}
             >CSV</button>
             {graph.warnings.length > 0 && (
                 <button
