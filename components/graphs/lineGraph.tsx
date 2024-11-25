@@ -332,10 +332,12 @@ function generateCSV(data: any[], fullData: any[]) {
     const lineLabelsReordered: string[] = reorderFlat.map((r) => lineLabels[r]);
     const lineValuesReordered: number[][] = rearrange(lineValues, reorderFlat);
 
+    const lineValuesAsString: string[][] = lineValuesReordered.map(r => r.map((val) => isNaN(val) ? 'nan' : val.toString()));
+
     //for lines displayed vertically
     csvValues.push('X-Axis,' + lineLabelsReordered.toString());
     for (let i = 0; i < lineValues.length; i++) {
-        csvValues.push(String(points[i] + ',' + lineValuesReordered[i].toString()));
+        csvValues.push(String(points[i] + ',' + lineValuesAsString[i].toString()));
     }
 
     return csvValues;
