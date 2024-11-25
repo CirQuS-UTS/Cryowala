@@ -629,7 +629,13 @@ export function sweepModel2D(model: CryoModelInterface, fridge: FridgeConfig, li
                     data.forEach((d) => lineNames.push({ type: d.type, name: d.line.id, signalType: d.line.signalType }));
 
                     // calculate temperature estimate
-                    t_est = model.applyTStages(totalTemp);
+                    t_est = model.applyBoundedTStages(totalTemp);
+
+                    // check for NaN values in temperature estimates
+                    if (t_est.some((t) => isNaN(t))) {
+                        tempOutOfBounds = true;
+                        break;
+                    }
 
                     // check for NaN values in temperature estimates
                     if (t_est.some((t) => isNaN(t))) {

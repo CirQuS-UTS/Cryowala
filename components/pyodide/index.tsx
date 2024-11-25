@@ -186,8 +186,7 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
         return this.runJSON(code);
     }
 
-    // eslint-disable-next-line max-lines-per-function
-    applyTStages: ApplyTStagesFn = (heatLoads: number[]) => {
+    applyBoundedTStages: ApplyTStagesFn = (heatLoads: number[]) => {
         const heatLoadLimits: { stage: string, lowerLimit: number, upperLimit: number }[] = [
             {
                 stage: "50K",
@@ -240,6 +239,11 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
             return this.nanValueArray(heatLoads);
         }
 
+        return this.applyTStages(heatLoadsLocal)
+    }
+
+    // eslint-disable-next-line max-lines-per-function
+    applyTStages: ApplyTStagesFn = (heatLoads: number[]) => {
         const jsToPy = javascriptToPython;
         const code = `
             from CryowalaCore import param_functions
@@ -264,7 +268,6 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
         const heatLoads: number[][] = [];
         const cpHeatLoads: number[][] = [];
         const temperatures: number[][] = [];
-        const outputLoads: number[][][] = [[], [], []];
 
         for (let k = 0; k < lines.length; k++) {
             const values: number[] = [];
@@ -297,7 +300,7 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
         const tempVals: number[][] = [];
 
         for (let t = 0; t < cpHeatLoads.length; t++) {
-            temperatures.push(this.applyTStages(heatLoads[t]))
+            temperatures.push(this.applyBoundedTStages(heatLoads[t]))
         }
 
         const totalNoise: number[] = [];
@@ -312,7 +315,7 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
             totalNoise.push(stageNoiseTotal);
         }
 
-        tempVals.push(this.applyTStages(totalNoise));
+        tempVals.push(this.applyBoundedTStages(totalNoise));
 
         const output: SweepModelInnerOutput = {
             absHeatValues: absHeatVals,
@@ -509,9 +512,9 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
 
         // calculate total Temperature Values
         const totalTemperatureForStages: number[][] = stages.map(() => []); // [stage][range]
-        range.forEach((point, p) => {
-            const values: number[] = this.applyTStages(totalAbsHeatLoadForStages.map((stage, s) => stage[p]));
-            stages.forEach((stage, s) => totalTemperatureForStages[s].push(values[s]));
+        range.forEach((_, p) => {
+            const values: number[] = this.applyBoundedTStages(totalAbsHeatLoadForStages.map((stage) => stage[p]));
+            stages.forEach((_, s) => totalTemperatureForStages[s].push(values[s]));
         });
 
         stages.forEach((stage, s) => output[String(stage + '_TotalTemperature')] = totalTemperatureForStages[s]);
