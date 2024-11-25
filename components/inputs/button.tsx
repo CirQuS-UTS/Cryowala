@@ -1,5 +1,6 @@
 import { ReactNode, useRef } from "react";
 import styles from "@/components/config/Config.module.css";
+import { Tooltip } from "@/lib/tooltip";
 
 
 export type ButtonColumnProps<T> = Omit<JSX.IntrinsicElements["button"], "onClick"> & {
@@ -12,7 +13,9 @@ export type ButtonColumnProps<T> = Omit<JSX.IntrinsicElements["button"], "onClic
 export function ButtonColumn<T>({ label, tooltip, message, data, onClick, ...props }: ButtonColumnProps<T>): ReactNode {
   return (
     <label className={styles.LABEL}>
-      <h1 title={tooltip} style={{ textDecoration: 'underline dotted' }}>{label}</h1>
+      <Tooltip data={tooltip}>
+        <h1 style={{ textDecoration: 'underline dotted' }}>{label}</h1>
+      </Tooltip>
       {data.map((item: T, index: number) => (
         <div key={index} className="px-1">
           <button className={[styles.BUTTON, styles.INPUT].join(" ")}
@@ -54,7 +57,9 @@ export function UploadButtonColumn<T>({ label, tooltip, message, data, onClick, 
 
   return (
     <label className={styles.LABEL}>
-      <h1 title={tooltip} style={{ textDecoration: 'underline dotted' }}>{label}</h1>
+      <Tooltip data={tooltip}>
+        <h1 style={{ textDecoration: 'underline dotted' }}>{label}</h1>
+      </Tooltip>
       {data.map((item: T, index: number) => (
         <div key={index} className="px-1">
           <input
