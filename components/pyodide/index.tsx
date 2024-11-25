@@ -90,9 +90,6 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
     passiveLoad: PassiveLoadFn = (stages, diameters, lengths, stage_temperatures, thermal_conductivities, thermal_schemes) => {
         const jsToPy = javascriptToPython;
 
-        // if NaN value contaminating temperatures, output only NaN values
-        if (stage_temperatures.some((t) => isNaN(t))) return this.nanValueArray(stage_temperatures);
-
         const code = `
         from CryowalaCore import model_functions, param_functions
         import json
