@@ -6,6 +6,7 @@ export interface CryoModelInterface {
 	fluxNoise: FluxNoiseFn;
 	cableAttenuation: CableAttenuationFn;
 	applyTStages: ApplyTStagesFn;
+	applyBoundedTStages: ApplyTStagesFn;
 	sweepModelInner: SweepModelInnerFn;
 	cableAttGeneration: CableAttGenerationFn;
 	noisePhotons: NoisePhotonsFn;
