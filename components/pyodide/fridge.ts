@@ -637,12 +637,6 @@ export function sweepModel2D(model: CryoModelInterface, fridge: FridgeConfig, li
                         break;
                     }
 
-                    // check for NaN values in temperature estimates
-                    if (t_est.some((t) => isNaN(t))) {
-                        tempOutOfBounds = true;
-                        break;
-                    }
-
                     // collate data to matrix, applying cooling power
                     const load_matrix: number[][] = data.map((d) =>
                         stages.map((stage, s) => (d.output[stage] / cooling_power[s]))
