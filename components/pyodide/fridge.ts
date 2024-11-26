@@ -607,6 +607,9 @@ export function sweepModel2D(model: CryoModelInterface, fridge: FridgeConfig, li
                     signalType: ("Drive" | "Flux" | "Output")
                 }[] = [];
 
+                //catch if temperature estimates recieve NaN values
+                var tempOutOfBounds: boolean = false;
+
                 // loop while degree of change between results from previous loops exceeds threshold
                 while (delta_load_matrix.some((m) => m.some((n) => n > threshold))) {
                     // update fridge configs stage temperature values
@@ -622,14 +625,17 @@ export function sweepModel2D(model: CryoModelInterface, fridge: FridgeConfig, li
                         return sum;
                     });
 
-                    // account for still plate target temperature
-                    totalTemp[2] = Math.max(30e-3, totalTemp[2]);
-
                     lineNames = [];
                     data.forEach((d) => lineNames.push({ type: d.type, name: d.line.id, signalType: d.line.signalType }));
 
                     // calculate temperature estimate
-                    t_est = model.applyTStages(totalTemp);
+                    t_est = model.applyBoundedTStages(totalTemp);
+
+                    // check for NaN values in temperature estimates
+                    if (t_est.some((t) => isNaN(t))) {
+                        tempOutOfBounds = true;
+                        break;
+                    }
 
                     // collate data to matrix, applying cooling power
                     const load_matrix: number[][] = data.map((d) =>
@@ -677,8 +683,8 @@ export function sweepModel2D(model: CryoModelInterface, fridge: FridgeConfig, li
 
                 // add values to overall data
                 data_loads[i].push(heat_load_data);
-                data_temps[i].push(temperature_data);
-                data_noise[i].push({
+                data_temps[i].push((tempOutOfBounds) ? emptyStages : temperature_data);
+                data_noise[i].push((tempOutOfBounds) ? emptyNoise : {
                     photons: sumRecord(n_data[0]),
                     voltage: sumRecord(n_data[1]),
                     current: sumRecord(n_data[2])

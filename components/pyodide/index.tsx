@@ -90,9 +90,6 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
     passiveLoad: PassiveLoadFn = (stages, diameters, lengths, stage_temperatures, thermal_conductivities, thermal_schemes) => {
         const jsToPy = javascriptToPython;
 
-        // if NaN value contaminating temperatures, output only NaN values
-        if (stage_temperatures.some((t) => isNaN(t))) return this.nanValueArray(stage_temperatures);
-
         const code = `
         from CryowalaCore import model_functions, param_functions
         import json
@@ -189,8 +186,7 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
         return this.runJSON(code);
     }
 
-    // eslint-disable-next-line max-lines-per-function
-    applyTStages: ApplyTStagesFn = (heatLoads: number[]) => {
+    applyBoundedTStages: ApplyTStagesFn = (heatLoads: number[]) => {
         const heatLoadLimits: { stage: string, lowerLimit: number, upperLimit: number }[] = [
             {
                 stage: "50K",
@@ -219,18 +215,18 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
             },
         ];
 
-        // const still = Math.max(heatLoads[2], 3e-2)
-        heatLoads[2] = Math.max(heatLoads[2], 3e-2);
+        // only works for 5 stage fridge where the middle stage is the still stage.
+        const heatLoadsLocal = heatLoads.map((h, i) => (i == 2) ? Math.max(heatLoads[i], 3e-2) : h);
 
         const errors: string[] = [];
 
         for (let i = 0; i < heatLoadLimits.length; i++) {
             if (
-                heatLoads[i] < heatLoadLimits[i].lowerLimit ||
-                heatLoads[i] > heatLoadLimits[i].upperLimit
+                heatLoadsLocal[i] < heatLoadLimits[i].lowerLimit ||
+                heatLoadsLocal[i] > heatLoadLimits[i].upperLimit
             ) {
                 errors.push(
-                    `Heat Load ${heatLoads[i]} exceeds the range ` +
+                    `Heat Load ${heatLoadsLocal[i]} exceeds the range ` +
                     `[${heatLoadLimits[i].lowerLimit},` +
                     ` ${heatLoadLimits[i].upperLimit}]` +
                     ` for stage ${heatLoadLimits[i].stage}\n`
@@ -238,13 +234,16 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
             };
         }
 
-        if (errors.length > 0 || heatLoads.some((t) => isNaN(t))) {
-            if (errors.length > 0) {
-                console.error(errors.join(''));
-            }
+        if (errors.length > 0) {
+            console.error(errors.join(''));
             return this.nanValueArray(heatLoads);
         }
 
+        return this.applyTStages(heatLoadsLocal)
+    }
+
+    // eslint-disable-next-line max-lines-per-function
+    applyTStages: ApplyTStagesFn = (heatLoads: number[]) => {
         const jsToPy = javascriptToPython;
         const code = `
             from CryowalaCore import param_functions
@@ -269,7 +268,6 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
         const heatLoads: number[][] = [];
         const cpHeatLoads: number[][] = [];
         const temperatures: number[][] = [];
-        const outputLoads: number[][][] = [[], [], []];
 
         for (let k = 0; k < lines.length; k++) {
             const values: number[] = [];
@@ -302,7 +300,7 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
         const tempVals: number[][] = [];
 
         for (let t = 0; t < cpHeatLoads.length; t++) {
-            temperatures.push(this.applyTStages(heatLoads[t]))
+            temperatures.push(this.applyBoundedTStages(heatLoads[t]))
         }
 
         const totalNoise: number[] = [];
@@ -317,7 +315,7 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
             totalNoise.push(stageNoiseTotal);
         }
 
-        tempVals.push(this.applyTStages(totalNoise));
+        tempVals.push(this.applyBoundedTStages(totalNoise));
 
         const output: SweepModelInnerOutput = {
             absHeatValues: absHeatVals,
@@ -351,77 +349,93 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
         return nanArr;
     }
 
+    filterRecord(record: Record<string, number>, filter: boolean[]): Record<string, number> {
+        const result: Record<string, number> = {};
+        const keys = Object.keys(record);
+        for (var k = 0; k < keys.length; k++) {
+            result[keys[k]] = (filter[k]) ? NaN : record[keys[k]];
+        }
+        return result;
+    }
+
+    getNaNValuePositions(temperatures: number[]): [number[], boolean[]] {
+        const isNanVal: boolean[] = [false];
+
+        const temperaturesNoNaN = temperatures.map((t) => {
+            if (isNaN(t)) {
+                isNanVal.push(true);
+                return 1;
+            } else {
+                isNanVal.push(false);
+                return t;
+            }
+        })
+
+        return [temperaturesNoNaN, isNanVal];
+    }
+
     noisePhotons: NoisePhotonsFn = (temperatures: number[], config: number[], cable_att: number[], lengths: number[], stages: string[], frequency: number) => {
         const jsToPy = javascriptToPython;
 
-        // if NaN value contaminating temperatures, output only NaN values for stages + RT
-        if (temperatures.some((t) => isNaN(t))) return this.nanValueArray(temperatures, true);
+        const [temperaturesNoNaN, isNanVal] = this.getNaNValuePositions(temperatures);
 
         const code = `
         from CryowalaCore import param_functions
         import json
         model_functions.noise_photons(
-            temp=${jsToPy(temperatures)},
+            temp=${jsToPy(temperaturesNoNaN)},
             att=${jsToPy(config)},
             cable_att=${jsToPy(cable_att)},
             lengths=${jsToPy(lengths)},
             stage_labels=${jsToPy(stages)},
             f=${jsToPy(frequency * 1e9)}
         ).to_json(double_precision=15)`;
-        return this.runJSON(code);
+        return this.filterRecord(this.runJSON(code), isNanVal);
     }
 
     noiseCurrent: NoiseCurrentFn = (temperatures: number[], config: number[], cable_att: number[], lengths: number[], stages: string[], frequency: number) => {
         const jsToPy = javascriptToPython;
 
-        // if NaN value contaminating temperatures, output only NaN values for stages + RT
-        if (temperatures.some((t) => isNaN(t))) return this.nanValueArray(temperatures, true);
+        const [temperaturesNoNaN, isNanVal] = this.getNaNValuePositions(temperatures);
 
         const code = `
         from CryowalaCore import param_functions
         import json
         model_functions.noise_current(
-            temp=${jsToPy(temperatures)},
+            temp=${jsToPy(temperaturesNoNaN)},
             att=${jsToPy(config)},
             cable_att=${jsToPy(cable_att)},
             lengths=${jsToPy(lengths)},
             stage_labels=${jsToPy(stages)},
             f=${jsToPy(frequency * 1e9)}
         ).to_json(double_precision=15)`;
-        return this.runJSON(code);
+        return this.filterRecord(this.runJSON(code), isNanVal);
     }
 
     noiseVoltage: NoiseVoltageFn = (temperatures: number[], config: number[], cable_att: number[], lengths: number[], stages: string[], frequency: number) => {
         const jsToPy = javascriptToPython;
 
-        // if NaN value contaminating temperatures, output only NaN values for stages + RT
-        if (temperatures.some((t) => isNaN(t))) return this.nanValueArray(temperatures, true);
+        const [temperaturesNoNaN, isNanVal] = this.getNaNValuePositions(temperatures);
 
         const code = `
         from CryowalaCore import param_functions
         import json
         model_functions.noise_voltage(
-            temp=${jsToPy(temperatures)},
+            temp=${jsToPy(temperaturesNoNaN)},
             att=${jsToPy(config)},
             cable_att=${jsToPy(cable_att)},
             lengths=${jsToPy(lengths)},
             stage_labels=${jsToPy(stages)},
             f=${jsToPy(frequency * 1e9)}
         ).to_json(double_precision=15)`;
-        return this.runJSON(code);
+        return this.filterRecord(this.runJSON(code), isNanVal);
     }
 
     // eslint-disable-next-line max-lines-per-function
     generateNoiseData(temperatures: number[], config: number[], cable_att: number[], lengths: number[], stages: string[], frequency: number): number[][] {
         const jsToPy = javascriptToPython;
 
-        // if NaN value contaminating temperatures, output only NaN values
-        if (temperatures.some((t) => isNaN(t))) {
-            //  for each stage + RT
-            const nanArr = this.nanValueArray(temperatures, true);
-            // return for each type of noise value
-            return [nanArr, nanArr, nanArr];
-        }
+        const [temperaturesNoNaN, isNanVal] = this.getNaNValuePositions(temperatures);
 
         const code = `
         from CryowalaCore import param_functions
@@ -432,7 +446,7 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
         n_data = []
 
         n_data.append(model_functions.noise_photons(
-            temp=${jsToPy(temperatures)},
+            temp=${jsToPy(temperaturesNoNaN)},
             att=${jsToPy(config)},
             cable_att=${jsToPy(cable_att)},
             lengths=${jsToPy(lengths)},
@@ -440,7 +454,7 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
             f=${jsToPy(frequency * 1e9)}
         ).to_list())
         n_data.append(model_functions.noise_current(
-            temp=${jsToPy(temperatures)},
+            temp=${jsToPy(temperaturesNoNaN)},
             att=${jsToPy(config)},
             cable_att=${jsToPy(cable_att)},
             lengths=${jsToPy(lengths)},
@@ -448,7 +462,7 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
             f=${jsToPy(frequency * 1e9)}
         ).to_list())
         n_data.append(model_functions.noise_voltage(
-            temp=${jsToPy(temperatures)},
+            temp=${jsToPy(temperaturesNoNaN)},
             att=${jsToPy(config)},
             cable_att=${jsToPy(cable_att)},
             lengths=${jsToPy(lengths)},
@@ -457,7 +471,9 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
         ).to_list())
         json.dumps(n_data)
         `
-        return this.runJSON(code);
+        const rawResult: number[][] = this.runJSON(code);
+        const result = rawResult.map((noiseType) => noiseType.map((temp, i) => (isNanVal[i]) ? NaN : temp));
+        return result;
     }
 
     // eslint-disable-next-line max-lines-per-function
@@ -514,9 +530,9 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
 
         // calculate total Temperature Values
         const totalTemperatureForStages: number[][] = stages.map(() => []); // [stage][range]
-        range.forEach((point, p) => {
-            const values: number[] = this.applyTStages(totalAbsHeatLoadForStages.map((stage, s) => stage[p]));
-            stages.forEach((stage, s) => totalTemperatureForStages[s].push(values[s]));
+        range.forEach((_, p) => {
+            const values: number[] = this.applyBoundedTStages(totalAbsHeatLoadForStages.map((stage) => stage[p]));
+            stages.forEach((_, s) => totalTemperatureForStages[s].push(values[s]));
         });
 
         stages.forEach((stage, s) => output[String(stage + '_TotalTemperature')] = totalTemperatureForStages[s]);

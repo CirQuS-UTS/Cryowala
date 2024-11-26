@@ -332,10 +332,12 @@ function generateCSV(data: any[], fullData: any[]) {
     const lineLabelsReordered: string[] = reorderFlat.map((r) => lineLabels[r]);
     const lineValuesReordered: number[][] = rearrange(lineValues, reorderFlat);
 
+    const lineValuesAsString: string[][] = lineValuesReordered.map(r => r.map((val) => isNaN(val) ? 'nan' : val.toString()));
+
     //for lines displayed vertically
     csvValues.push('X-Axis,' + lineLabelsReordered.toString());
     for (let i = 0; i < lineValues.length; i++) {
-        csvValues.push(String(points[i] + ',' + lineValuesReordered[i].toString()));
+        csvValues.push(String(points[i] + ',' + lineValuesAsString[i].toString()));
     }
 
     return csvValues;
@@ -389,11 +391,11 @@ function LineGraph({ data, fullData, stage, graphID, type, xLabel = "X-Axis", yL
         <div className={`group flex flex-row relative w-[${width}] h-[${height}]`}>
             <button
                 className="hidden group-hover:block absolute top-4 right-10 bg-zinc-800 text-white px-2 rounded-lg"
-                onClick={() => exportFile(svgOutput, String(type + "-" + stage + ".svg"))}
+                onClick={() => exportFile(svgOutput, String(((stage == 'Noise') ? "" : type + "-") + stage + "-graph.svg"))}
             >SVG</button>
             <button
                 className="hidden group-hover:block absolute top-4 right-[5.5rem] bg-zinc-800 text-white px-2 rounded-lg"
-                onClick={() => exportFile(csvOutput, String(type + "-" + stage + ".csv"))}
+                onClick={() => exportFile(csvOutput, String(((stage == 'Noise') ? "" : type + "-") + stage + "-values.csv"))}
             >CSV</button>
             {graph.warnings.length > 0 && (
                 <button
