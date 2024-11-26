@@ -3,6 +3,7 @@
 import { FC, PropsWithChildren, createContext, useContext, useEffect, useMemo, useState } from "react"
 import defaultFridge from "@/components/config/GUIconfig.json"
 import { FridgeConfig, StageConfig, CableConfig, LineConfig, SegmentConfig } from "@/components/pyodide/fridge.d"
+import { useFeatureFlags } from "./featureFlagContext"
 
 export type FridgeContext = FridgeConfig & {
   setStages: (stages: StageConfig[]) => void,
@@ -42,9 +43,11 @@ export const FridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const [lines, setLines] = useState<LineConfig[]>([]);
   const [segments, setSegments] = useState<SegmentConfig[]>([]);
 
+  const featureFlags = useFeatureFlags();
+
   // Ensure that the stages are always sorted by index
   const setStages = useMemo(() => (stages: StageConfig[]) => {
-    if (stages.length != 5) throw new Error('Fridge Configuration must have exactly 5 stages.')
+    if (featureFlags.staticStageCount && stages.length != 5) throw new Error('Fridge Configuration must have exactly 5 stages.')
     const sorted = stages;
     stages.sort((a, b) => a.index - b.index);
     setStagesRaw(sorted);
