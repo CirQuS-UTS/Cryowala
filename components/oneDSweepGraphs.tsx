@@ -106,9 +106,6 @@ export default function OneDSweepGraphs({ sweepData, oneDGraphConfig, lineSignal
                         setModal={setModal}
                         modalDimensions={dimensions}
                     />}
-                    {oneDGraphConfig.showColumns[1] && oneDGraphConfig.showColumns[0] &&
-                        <svg width={noiseWidth} height={rowHeight}></svg>
-                    }
                 </div>
             )}
         </div>
