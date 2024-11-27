@@ -3,6 +3,7 @@ import { FridgeProvider } from '@/components/config/context'
 import './globals.css'
 import NavBar from "@/components/navbar";
 import { PythonRuntimeProvider } from '@/lib/pythonrt';
+import { FeatureFlagProvider } from '@/components/config/featureFlagContext';
 
 import '@mantine/core/styles.css';
 import { ColorSchemeScript, MantineProvider as BaseMantineProvider } from '@mantine/core';
@@ -32,7 +33,7 @@ export default function RootLayout({
         <ColorSchemeScript defaultColorScheme='light' />
       </head>
       <body>
-        <WrapWithProviders providers={[PythonRuntimeProvider, FridgeProvider, MantineProvider]}>
+        <WrapWithProviders providers={[PythonRuntimeProvider, FeatureFlagProvider, FridgeProvider, MantineProvider]}>
           <NavBar />
           {children}
         </WrapWithProviders>
