@@ -250,7 +250,7 @@
 				"dielectricThermalisation": "off",
 				"outerThermalisation": "auto",
 				"length": 0.236,
-				"attenuation": 4
+				"attenuation": 6
 			},
 			{
 				"cableId": "219-CuNi-CuNi",
@@ -260,7 +260,7 @@
 				"dielectricThermalisation": "auto",
 				"outerThermalisation": "auto",
 				"length": 0.337,
-				"attenuation": 16
+				"attenuation": 14
 			},
 			{
 				"cableId": "219-CuNi-CuNi",
