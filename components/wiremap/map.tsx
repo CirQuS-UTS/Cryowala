@@ -179,8 +179,7 @@ function Segment({ segment, width, height, wireDiagramModal }: SegmentProps) {
     }
   }, [model, fridge, segment]);
 
-  const thermalisations = [segment.innerThermalisation, segment.dielectricThermalisation, segment.outerThermalisation];
-  const shouldRender = thermalisations.some(thermalisation => thermalisation !== "auto") || segment.attenuation > 0;
+  const shouldRender = segment.attenuation > 0;
 
   // eslint-disable-next-line max-lines-per-function
   const updateThermalisation = (segment: SegmentConfig, thermalID: ("inner" | "dielectric" | "outer")) => {

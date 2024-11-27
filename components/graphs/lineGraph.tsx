@@ -71,11 +71,24 @@ function getDistances(index: number, labels: string[], xMax: number): [number, n
 
 // eslint-disable-next-line max-lines-per-function
 function generateGraph({ data, fullData, width, height, xOffsetPer, yOffsetPer, linear, xLabel, yLabel, type, graphID, toSVG }: GraphDefinition): { graph: React.JSX.Element, warnings: string[] } {
+
+    const labelFontSize = Math.max(height / 45, 10);
+    const tickLabelFontSize = Math.max(height / 50, 10);
+
+    const topOffsetDivisor = (toSVG) ? 6 : 3;
+    const leftOffsetDivisor = (toSVG) ? 3 : 1.3;
+
+    const axisLabelHeight = labelFontSize * 2;
+
     // calculate bounds
-    const xOffset = width * xOffsetPer;
-    const yOffset = height * yOffsetPer;
-    const xMax = width - xOffset;
-    const yMax = height - yOffset;
+    const gWidth = width - axisLabelHeight;
+    const gHeight = height - axisLabelHeight;
+
+    const xOffset = gWidth * xOffsetPer;
+    const yOffset = gHeight * yOffsetPer;
+
+    const xMax = gWidth - xOffset;
+    const yMax = gHeight - yOffset;
 
     // generate scales
     const xScale = (linear[0]) ? scaleLinear({
@@ -230,14 +243,10 @@ function generateGraph({ data, fullData, width, height, xOffsetPer, yOffsetPer, 
         return (xOffset / 2) + (xPos);
     }
 
-    const labelFontSize = Math.max(height / 45, 10);
-    const tickLabelFontSize = Math.max(height / 50, 10);
 
-    const topOffsetDivisor = (toSVG) ? 6 : 3;
-    const leftOffsetDivisor = (toSVG) ? 3 : 1.3;
 
     const graph = (<svg xmlns="http://www.w3.org/2000/svg" width={width} height={height} key={"group-" + type + '-' + graphID}>
-        <Group top={yOffset / topOffsetDivisor} left={xOffset / leftOffsetDivisor} >
+        <Group top={yOffset / topOffsetDivisor} left={(xOffset / leftOffsetDivisor) + axisLabelHeight} >
             <DualVerticalAxis
                 directionality={"left"}
                 thirdAxis={false}
@@ -259,7 +268,6 @@ function generateGraph({ data, fullData, width, height, xOffsetPer, yOffsetPer, 
                 scale={xScale}
                 label={xLabel}
                 labelProps={{ fontSize: labelFontSize, textAnchor: 'middle' }}
-                labelOffset={15}
                 numTicks={5}
                 tickLabelProps={{ fontSize: tickLabelFontSize }}
                 top={yMax}
@@ -281,7 +289,7 @@ function generateGraph({ data, fullData, width, height, xOffsetPer, yOffsetPer, 
         {toSVG && cLines.map((c, i) =>
             <Group
                 top={generateTopPos(i, lineLabelsFull)}
-                left={generateLeftPos(i, lineLabelsFull)}
+                left={generateLeftPos(i, lineLabelsFull) + axisLabelHeight}
                 key={"legend-" + type + '-' + graphID + '-' + i}
             >
                 <rect
