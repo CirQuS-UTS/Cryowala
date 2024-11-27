@@ -1,6 +1,6 @@
 "use client";
 
-import React, { PropsWithChildren, ReactNode, useEffect, useMemo, useState } from 'react';
+import React, { ReactNode, useEffect, useMemo, useState } from 'react';
 import { CryoModel, useCryogenicModel } from '@/components/pyodide';
 import { FridgeContext, useFridge } from '@/components/config/context';
 import { linspace, sweepModel, sweepModel2D } from '@/components/pyodide/fridge';
@@ -20,8 +20,6 @@ import SweepConfigTransfer from '@/components/inputs/sweepConfigTransfer';
 import OneDSweepGraphs from '@/components/oneDSweepGraphs';
 import Modal from '@/components/inputs/modal';
 import ModalGraphControl2D from '@/components/inputs/modalGraphControls2D';
-import { LoadingScreen } from '@/components/loadingScreen';
-import { WithPythonRuntime } from '@/lib/pythonrt';
 
 const noiseTypes: string[] = ['Photons', 'Current', 'Voltage'];
 
@@ -626,16 +624,6 @@ function GraphConfig2D({ configs, setConfigs, modal }: GraphConfig2DProps): Reac
   );
 }
 
-
-// eslint-disable-next-line max-lines-per-function
-export default function SweepPageWrapper() {
-  return (
-    <WithPythonRuntime>
-      <SweepPage />
-    </WithPythonRuntime>
-  );
-}
-
 type SweepResult = [SweepDataObject | null, string | null];
 type SweepResult2D = [SweepResults2D | null, string | null];
 
@@ -871,7 +859,7 @@ function use2DGraphConfigs(): [GraphConfiguration2D[], (configs: GraphConfigurat
 }
 
 // eslint-disable-next-line max-lines-per-function
-function SweepPage() {
+export default function SweepPage() {
   const SideBarContent = useSideBarContent();
 
   const fridge = useFridge();
