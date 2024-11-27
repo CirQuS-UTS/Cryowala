@@ -5,9 +5,9 @@ import { LineConfig, SegmentConfig, StageConfig } from "@/components/pyodide/fri
 import { UniqueInputColumn } from "@/components/inputs/unique";
 import { NumericInputColumn } from "@/components/inputs/numeric";
 import { DeleteButtonColumn, FormGroup, FormSection, findNextId } from "@/components/config/common";
-import { ButtonColumn, UploadButtonColumn } from "@/components/inputs/button";
 import { readCSVFile } from "@/components/config/ConfigCable";
 import { useFeatureFlags } from "@/components/config/featureFlagContext";
+import { UploadCSVButton } from "../inputs/importCSVButton";
 
 function getNewStage(stages: StageConfig[], lines: LineConfig[]): [StageConfig, SegmentConfig[]] {
   const nextIndex = stages.length > 0 ? Math.ceil(Math.max(...stages.map((item: StageConfig) => item.index))) + 1 : 0;
@@ -68,7 +68,7 @@ export default function FridgeStages({ tooltips, setModal }: StageConfigProps): 
   };
 
   // eslint-disable-next-line max-lines-per-function
-  const onFileSelected = (event: React.ChangeEvent<HTMLInputElement>, index: number) => {
+  const onFileSelected = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
     if (!files) return alert("No file selected");
     if (files.length !== 1) return alert("Please select exactly one file");
@@ -102,22 +102,15 @@ export default function FridgeStages({ tooltips, setModal }: StageConfigProps): 
         <UniqueInputColumn<StageConfig> label="Stage Names" tooltip={tooltips.stage_names} data={stages} valueGetter={(item: StageConfig) => item.id} valueSetter={(index, item, value) => updateStageId(index, item.id, value)} isUnique={(value: string) => stages.every((item: StageConfig) => item.id !== value)} />
         <NumericInputColumn<StageConfig> label="Temperatures" tooltip={tooltips.tempertures} data={stages} valueGetter={(item: StageConfig) => item.temperature} valueSetter={(index, item, value) => updateStage(index, "temperature", value)} />
         <NumericInputColumn<StageConfig> label="Cooling Powers" tooltip={tooltips.cooling_powers} data={stages} valueGetter={(item: StageConfig) => item.coolingPower} valueSetter={(index, item, value) => updateStage(index, "coolingPower", value)} />
-
-        <UploadButtonColumn<StageConfig>
-          label={"Load Temperature Data"}
-          message={"Import CSV File"}
-          data={stages}
-          onClick={onFileSelected}
-        />
-        <ButtonColumn<StageConfig>
-          label={'View Temperature Data'}
-          message="View Data Points"
-          data={stages}
-          onClick={() => null}
-        />
-
         {!featureFlags.staticStageCount && <DeleteButtonColumn<StageConfig> label="Stage" tooltip={tooltips.remove_stage} data={stages} onClick={removeStage} />}
       </FormGroup>
+
+      <UploadCSVButton
+        label={"Load Temp Data"}
+        message={"Import CSV File"}
+        onClick={onFileSelected}
+      />
+
     </FormSection>
   );
 }
