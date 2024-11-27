@@ -1,4 +1,5 @@
 import SideBar from '@/components/sideBar'
+import { WithPythonRuntime } from '@/lib/pythonrt'
 
 export default function FridgeLayout({
     children,
@@ -6,8 +7,12 @@ export default function FridgeLayout({
     children: React.ReactNode
 }) {
     return (
-        <SideBar>
-            {children}
-        </SideBar>
+        <div className={'h-[90vh]'}>
+            <WithPythonRuntime>
+                <SideBar>
+                    {children}
+                </SideBar>
+            </WithPythonRuntime>
+        </div>
     )
 }

@@ -6,6 +6,7 @@ import { UniqueInputColumn } from "@/components/inputs/unique";
 import { NumericInputColumn } from "@/components/inputs/numeric";
 import { DeleteButtonColumn, FormGroup, FormSection, findNextId } from "@/components/config/common";
 import { readCSVFile } from "@/components/config/ConfigCable";
+import { useFeatureFlags } from "@/components/config/featureFlagContext";
 import { UploadCSVButton } from "../inputs/importCSVButton";
 
 function getNewStage(stages: StageConfig[], lines: LineConfig[]): [StageConfig, SegmentConfig[]] {
@@ -92,14 +93,16 @@ export default function FridgeStages({ tooltips, setModal }: StageConfigProps): 
     );
   }
 
+  const featureFlags = useFeatureFlags()
+
   return (
     <FormSection>
-      <FormGroup title="Stages" tooltip={tooltips.title} buttonLabel="Add Stage" buttonTooltip={tooltips.add_stage} onAddClicked={addStage} >
+      <FormGroup title="Stages" tooltip={tooltips.title} buttonLabel="Add Stage" buttonTooltip={tooltips.add_stage} onAddClicked={(featureFlags.staticStageCount) ? undefined : addStage} >
         <NumericInputColumn<StageConfig> label="Index" tooltip={tooltips.index} data={stages} valueGetter={(item: StageConfig) => item.index} valueSetter={(index, item, value) => updateStage(index, "index", value)} />
         <UniqueInputColumn<StageConfig> label="Stage Names" tooltip={tooltips.stage_names} data={stages} valueGetter={(item: StageConfig) => item.id} valueSetter={(index, item, value) => updateStageId(index, item.id, value)} isUnique={(value: string) => stages.every((item: StageConfig) => item.id !== value)} />
         <NumericInputColumn<StageConfig> label="Temperatures" tooltip={tooltips.tempertures} data={stages} valueGetter={(item: StageConfig) => item.temperature} valueSetter={(index, item, value) => updateStage(index, "temperature", value)} />
         <NumericInputColumn<StageConfig> label="Cooling Powers" tooltip={tooltips.cooling_powers} data={stages} valueGetter={(item: StageConfig) => item.coolingPower} valueSetter={(index, item, value) => updateStage(index, "coolingPower", value)} />
-        <DeleteButtonColumn<StageConfig> label="Stage" tooltip={tooltips.remove_stage} data={stages} onClick={removeStage} />
+        {!featureFlags.staticStageCount && <DeleteButtonColumn<StageConfig> label="Stage" tooltip={tooltips.remove_stage} data={stages} onClick={removeStage} />}
       </FormGroup>
 
       <UploadCSVButton

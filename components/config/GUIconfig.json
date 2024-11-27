@@ -166,7 +166,7 @@
 			{
 				"id": "flux",
 				"signalType": "Flux",
-				"currentType": "AC",
+				"currentType": "DC",
 				"signalPower": 0,
 				"signalFrequency": 6,
 				"inputCurrent": 0.02,
@@ -210,7 +210,7 @@
 				"dielectricThermalisation": "auto",
 				"outerThermalisation": "auto",
 				"length": 0.337,
-				"attenuation": 60
+				"attenuation": 10
 			},
 			{
 				"cableId": "219-SS-SS",
@@ -230,7 +230,7 @@
 				"dielectricThermalisation": "auto",
 				"outerThermalisation": "auto",
 				"length": 0.15,
-				"attenuation": 0
+				"attenuation": 20
 			},
 			{
 				"cableId": "219-SS-SS",
@@ -240,7 +240,7 @@
 				"dielectricThermalisation": "on",
 				"outerThermalisation": "auto",
 				"length": 0.222,
-				"attenuation": 0
+				"attenuation": 30
 			},
 			{
 				"cableId": "219-CuNi-CuNi",
@@ -250,7 +250,7 @@
 				"dielectricThermalisation": "off",
 				"outerThermalisation": "auto",
 				"length": 0.236,
-				"attenuation": 4
+				"attenuation": 6
 			},
 			{
 				"cableId": "219-CuNi-CuNi",
@@ -260,7 +260,7 @@
 				"dielectricThermalisation": "auto",
 				"outerThermalisation": "auto",
 				"length": 0.337,
-				"attenuation": 16
+				"attenuation": 14
 			},
 			{
 				"cableId": "219-CuNi-CuNi",

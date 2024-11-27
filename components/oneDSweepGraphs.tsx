@@ -79,10 +79,10 @@ export default function OneDSweepGraphs({ sweepData, oneDGraphConfig, lineSignal
                 <div className="flex flex-row w-full h-full">
                     <CenteredText style={{ width: STAGE_LABEL_WIDTH }}>Noise</CenteredText>
                     {oneDGraphConfig.showColumns[0] && <LineGraph
-                        data={filterLines(sweepData.noiseData[oneDGraphConfig.noiseType], stages.length, lineSignalTypes, oneDGraphConfig.showLines, oneDGraphConfig.showTotalLines, oneDGraphConfig.noiseCont)}
+                        data={filterLines(sweepData.noiseData[oneDGraphConfig.noiseType], fridge.stages.length, lineSignalTypes, oneDGraphConfig.showLines, oneDGraphConfig.showTotalLines, oneDGraphConfig.noiseCont)}
                         fullData={sweepData.noiseData[oneDGraphConfig.noiseType]}
                         stage={'Noise'}
-                        graphID={stages.length}
+                        graphID={fridge.stages.length}
                         type={'heatLoad'}
                         xLabel={"Attenuation"}
                         yLabel={"Noise " + noiseTypes[oneDGraphConfig.noiseType]}
@@ -93,10 +93,10 @@ export default function OneDSweepGraphs({ sweepData, oneDGraphConfig, lineSignal
                         modalDimensions={dimensions}
                     />}
                     {!oneDGraphConfig.showColumns[0] && oneDGraphConfig.showColumns[1] && <LineGraph
-                        data={filterLines(sweepData.noiseData[oneDGraphConfig.noiseType], stages.length, lineSignalTypes, oneDGraphConfig.showLines, oneDGraphConfig.showTotalLines, oneDGraphConfig.noiseCont)}
+                        data={filterLines(sweepData.noiseData[oneDGraphConfig.noiseType], fridge.stages.length, lineSignalTypes, oneDGraphConfig.showLines, oneDGraphConfig.showTotalLines, oneDGraphConfig.noiseCont)}
                         fullData={sweepData.noiseData[oneDGraphConfig.noiseType]}
                         stage={'Noise'}
-                        graphID={stages.length}
+                        graphID={fridge.stages.length}
                         type={'heatLoad'}
                         xLabel={"Attenuation"}
                         yLabel={"Noise " + noiseTypes[oneDGraphConfig.noiseType]}
