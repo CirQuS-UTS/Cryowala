@@ -969,47 +969,51 @@ function SweepPage() {
           }}
         >Add</button>
       </Modal>
-      <SideBarContent>
-        <SelectInput
-          type="segmented"
-          label=""
-          options={["Configure Sweep", "Configure Graph"]}
-          value={sidebarTab}
-          onChange={setSidebarTab}
-        />
-        {sidebarTab === "Configure Sweep" && (
-          <SweepConfig
-            config={sweepConfig}
-            setConfig={setSweepConfig}
-            sweep={sweepConfig.isTwoDimensional ? run2DSweep : run1DSweep}
-          />
-        )}
-        {sidebarTab === "Configure Graph" && !sweepConfig.isTwoDimensional && (
-          (!sweepData1DErr) ?
-            <GraphConfig1D
-              config={oneDGraphConfig}
-              colours={sweepData1D ? sweepData1D.colours : { line: [], noise: [] }}
-              setConfig={setOneDGraphConfig}
-            /> : <p className="text-center justify-center cursor-pointer" onClick={run1DSweep}>
-              <span className="text-lg">Run a 1D Sweep to View Configuration Options</span>
-              <br />
-              <span className="text-md text-gray-500">Click to run the sweep</span>
-            </p>
-        )}
-        {sidebarTab === "Configure Graph" && sweepConfig.isTwoDimensional && (
-          (!sweepData2DErr) ?
-            <GraphConfig2D
-              configs={twoDGraphConfig}
-              setConfigs={setTwoDGraphConfig}
-              modal={{ modal: add2DGraphModal, setModal: setAdd2DGraphModal }}
-            /> : <p className="text-center justify-center cursor-pointer" onClick={run2DSweep}>
-              <span className="text-lg">Run a 2D Sweep to View Configuration Options</span>
-              <br />
-              <span className="text-md text-gray-500">Click to run the sweep</span>
-            </p>
+      {/* Generate the Sidebar element */}
+      {SideBarContent({
+        children: (
+          <>
+            <SelectInput
+              type="segmented"
+              label=""
+              options={["Configure Sweep", "Configure Graph"]}
+              value={sidebarTab}
+              onChange={setSidebarTab}
+            />
+            {sidebarTab === "Configure Sweep" && (
+              <SweepConfig
+                config={sweepConfig}
+                setConfig={setSweepConfig}
+                sweep={sweepConfig.isTwoDimensional ? run2DSweep : run1DSweep}
+              />
+            )}
+            {sidebarTab === "Configure Graph" && !sweepConfig.isTwoDimensional && (
+              (!sweepData1DErr) ?
+                <GraphConfig1D
+                  config={oneDGraphConfig}
+                  colours={sweepData1D ? sweepData1D.colours : { line: [], noise: [] }}
+                  setConfig={setOneDGraphConfig}
+                /> : <p className="text-center justify-center cursor-pointer" onClick={run1DSweep}>
+                  <span className="text-lg">Run a 1D Sweep to View Configuration Options</span>
+                  <br />
+                  <span className="text-md text-gray-500">Click to run the sweep</span>
+                </p>
+            )}
+            {sidebarTab === "Configure Graph" && sweepConfig.isTwoDimensional && (
+              (!sweepData2DErr) ?
+                <GraphConfig2D
+                  configs={twoDGraphConfig}
+                  setConfigs={setTwoDGraphConfig}
+                  modal={{ modal: add2DGraphModal, setModal: setAdd2DGraphModal }}
+                /> : <p className="text-center justify-center cursor-pointer" onClick={run2DSweep}>
+                  <span className="text-lg">Run a 2D Sweep to View Configuration Options</span>
+                  <br />
+                  <span className="text-md text-gray-500">Click to run the sweep</span>
+                </p>
 
-        )}
-      </SideBarContent>
+            )}
+          </>)
+      })}
       {!sweepConfig.isTwoDimensional && sweepData1DErr && sweepData1DErr !== "loading" && (
         <div className="flex flex-col justify-around items-center w-full h-full">
           <p>
