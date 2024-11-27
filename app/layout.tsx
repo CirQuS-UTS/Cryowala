@@ -19,12 +19,12 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <PythonRuntimeProvider>
-          <FridgeProvider>
-            <FeatureFlagProvider>
+          <FeatureFlagProvider>
+            <FridgeProvider>
               <NavBar />
               {children}
-            </FeatureFlagProvider>
-          </FridgeProvider>
+            </FridgeProvider>
+          </FeatureFlagProvider>
         </PythonRuntimeProvider>
       </body>
     </html>

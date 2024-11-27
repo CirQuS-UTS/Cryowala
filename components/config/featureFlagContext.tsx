@@ -4,16 +4,19 @@ import { createContext, FC, PropsWithChildren, useContext, useEffect, useState }
 
 export type FeatureFlags = {
     staticStageCount: boolean
-}
+};
 
-const featureFlagsContext = createContext<FeatureFlags>({ staticStageCount: true });
-export const useFeatureFlags = () => useContext(featureFlagsContext);
+const defaultConfiguration: FeatureFlags = {
+    staticStageCount: true
+};
+
+const FeatureFlagsContext = createContext<FeatureFlags>(defaultConfiguration);
+
+export const useFeatureFlags = () => useContext(FeatureFlagsContext);
 
 export const FeatureFlagProvider: FC<PropsWithChildren> = ({ children }) => {
 
-    const [featureFlags, setFeatureFlags] = useState<FeatureFlags>({
-        staticStageCount: true
-    });
+    const [featureFlags, setFeatureFlags] = useState<FeatureFlags>(defaultConfiguration);
 
     useEffect(() => {
         fetch('https://api.codeishot.com/api/snippets/3HkvbQMD/')
@@ -24,8 +27,8 @@ export const FeatureFlagProvider: FC<PropsWithChildren> = ({ children }) => {
     }, []);
 
     return (
-        <featureFlagsContext.Provider value={featureFlags}>
+        <FeatureFlagsContext.Provider value={featureFlags}>
             {children}
-        </featureFlagsContext.Provider>
+        </FeatureFlagsContext.Provider>
     );
 }
