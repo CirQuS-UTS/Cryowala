@@ -7,7 +7,7 @@ import { linspace, sweepModel, sweepModel2D } from '@/components/pyodide/fridge'
 import ColourGraph from '@/components/graphs/colourGraph';
 import { FridgeConfig, SweepResults2D } from '@/components/pyodide/fridge.d';
 import { useDimensions } from "@/components/useDimensions";
-import { useSideBarContent } from '@/components/sideBar';
+import { SideBarContent } from '@/components/sideBar';
 import { interpolatePlasma, interpolateViridis } from 'd3-scale-chromatic';
 import SelectInput, { SegmentedSelect as MultipleSelectionInput } from '@/components/inputs/single_value/select';
 import TextInput from '@/components/inputs/single_value/text';
@@ -872,8 +872,6 @@ function use2DGraphConfigs(): [GraphConfiguration2D[], (configs: GraphConfigurat
 
 // eslint-disable-next-line max-lines-per-function
 function SweepPage() {
-  const SideBarContent = useSideBarContent();
-
   const fridge = useFridge();
   const lines = fridge.lines;
   const stages = fridge.stages.map(s => s.id);

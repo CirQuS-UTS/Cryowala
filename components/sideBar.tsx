@@ -1,6 +1,6 @@
 "use client";
 
-import React, { FC, PropsWithChildren, ReactNode, useState } from 'react';
+import React, { createContext, FC, PropsWithChildren, ReactNode, useContext, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { NavBarHeight } from '@/components/navbar';
 
@@ -26,24 +26,24 @@ function SideBarToggleButton({ isOpen, onClick }: SideBarToggleButtonProps) {
   )
 }
 
-const PlaceholderFunctionalComponent: FC = () => null;
 type SideBarContextType = {
   ref: React.RefObject<HTMLDivElement>,
 }
+export const SideBarContext = createContext<SideBarContextType | null>(null);
 
-export function useSideBarContent(): FC<PropsWithChildren> {
-  const context = React.useContext(SideBarContext);
+export function SideBarContent({ children }: PropsWithChildren) {
+  const context = useContext(SideBarContext);
 
-  if (!context?.ref?.current) return PlaceholderFunctionalComponent;
+  if (!context?.ref?.current) {
+    return null;
+  }
 
-  return ({ children }) => createPortal(children, context.ref.current!);
+  return createPortal(children, context.ref.current);
 }
-
-export const SideBarContext = React.createContext<SideBarContextType | null>(null);
 
 // eslint-disable-next-line max-lines-per-function
 export default function SideBar({ children }: PropsWithChildren): ReactNode {
-  const ref = React.useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState(true);
 
   return (
