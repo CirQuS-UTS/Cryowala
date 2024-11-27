@@ -343,17 +343,17 @@ function ColourGraph({ data, size, contourDefs, scale, colourInterpolator, label
     return (
         <div className="group flex flex-row relative w-full h-full justify-center items-center">
             <button
-                key={`export-${data.name}-2D-graph`}
+                key={`export-${data.name.type + "-" + data.name.target}-2D-graph`}
                 className="hidden group-hover:block absolute top-4 right-8 bg-zinc-800 text-white px-2 rounded-lg"
-                onClick={() => exportFile(svgOutput, String(data.name + "-2D-graph.svg"))}
+                onClick={() => exportFile(svgOutput, String(data.name.type + "-" + data.name.target + "-2D-graph.svg"))}
             >SVG</button>
             <button
-                key={`export-${data.name}-2D-values`}
+                key={`export-${data.name.type + "-" + data.name.target}-2D-values`}
                 className="hidden group-hover:block absolute top-4 right-20 bg-zinc-800 text-white px-2 rounded-lg"
                 onClick={() => {
-                    exportFile(csvOutput['x'], String(data.name + "-2D-x-values.csv"));
-                    exportFile(csvOutput['y'], String(data.name + "-2D-y-values.csv"));
-                    exportFile(csvOutput['z'], String(data.name + "-2D-z-values.csv"));
+                    exportFile(csvOutput['x'], String(data.name.type + "-" + data.name.target + "-2D-x-values.csv"));
+                    exportFile(csvOutput['y'], String(data.name.type + "-" + data.name.target + "-2D-y-values.csv"));
+                    exportFile(csvOutput['z'], String(data.name.type + "-" + data.name.target + "-2D-z-values.csv"));
                 }}
             >CSV</button>
             <div

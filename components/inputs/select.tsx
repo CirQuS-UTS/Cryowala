@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import styles from "@/components/config/Config.module.css";
+import { Tooltip } from "@/lib/tooltip";
 
 export type SelectColumnProps<T> = JSX.IntrinsicElements["select"] & {
   label: string,
@@ -12,7 +13,9 @@ export type SelectColumnProps<T> = JSX.IntrinsicElements["select"] & {
 export function SelectColumn<T>({ label, tooltip = undefined, data, valueGetter, valueSetter, options, ...props }: SelectColumnProps<T>): ReactNode {
   return (
     <label className={styles.LABEL}>
-      <h1 title={tooltip} style={{ textDecoration: 'underline dotted' }}>{label}</h1>
+      <Tooltip data={tooltip}>
+        <h1 style={{ textDecoration: 'underline dotted' }}>{label}</h1>
+      </Tooltip>
       {data.map((item: T, index: number) => (
         <div key={index} className="px-1">
           <select className={[styles.SELECT, (options.includes(valueGetter(item)) ? styles.VALID_INPUT : styles.INVALID_INPUT)].join(" ")}
