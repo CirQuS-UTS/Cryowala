@@ -1,4 +1,4 @@
-import { AxisBottom, AxisLeft,  AxisScale } from "@visx/axis";
+import { AxisBottom, AxisLeft, AxisScale } from "@visx/axis";
 import { AxisProps } from "@visx/axis/lib/axis/Axis";
 import { GridRows } from "@visx/grid";
 import { Legend } from "@visx/legend";
@@ -57,7 +57,7 @@ export function StyledAxis<Scale extends AxisScale>({ axis, ...props }: { axis: 
   props.tickLineProps = props.tickLineProps ?? { stroke: LABEL_COLOUR };
   props.tickLabelProps = props.tickLabelProps ?? { fontSize: 11, fill: LABEL_COLOUR };
 
-  return (<AxisComponent {...props}/>);
+  return (<AxisComponent {...props} />);
 }
 
 export type Margins = {
@@ -121,7 +121,7 @@ export function BaseGraph({ children, width, height, margins, colourScale, onLeg
       </div>
 
       {/* Tooltip */}
-      { tooltipOpen && TooltipContents && (
+      {tooltipOpen && TooltipContents && (
         <TooltipInPortal top={tooltipTop} left={tooltipLeft}>
           <TooltipContents />
         </TooltipInPortal>
@@ -149,7 +149,7 @@ export function BaseBarGraph({ children, width, height, xLabel, yLabel, margins,
   const xMax = width - margins.left - margins.right;
   const yMax = height - margins.top - margins.bottom;
 
-  const numTicksXDefault = xMax / 100;
+  const numTicksXDefault = Infinity;
   const numTicksYDefault = yMax / 50;
 
   // If the graph is logarithmic we override the default number of ticks:
@@ -160,11 +160,11 @@ export function BaseBarGraph({ children, width, height, xLabel, yLabel, margins,
   const numLogTicksGridY = numLogTicksAxisY * 10;
 
   return (
-    <BaseGraph 
+    <BaseGraph
       width={width} height={height} margins={margins}
       colourScale={xColourScale} onLegendHeightUpdate={onLegendHeightUpdate}
     >
-      
+
       {/* Grid */}
       <GridRows
         left={margins.left}
