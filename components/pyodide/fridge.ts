@@ -400,7 +400,8 @@ function createNewFridge(fridge: FridgeConfig, lineID: string, stages: string[],
         stages: fridge.stages,
         cables: fridge.cables,
         lines: fridge.lines,
-        segments: newSegments
+        segments: newSegments,
+        temperatureEstimationData: fridge.temperatureEstimationData
     };
 }
 
@@ -542,7 +543,8 @@ function updateFridgeStagesTemps(fridge: FridgeConfig, sTemp: number[]): FridgeC
         stages: newStages,
         cables: fridge.cables,
         lines: fridge.lines,
-        segments: fridge.segments
+        segments: fridge.segments,
+        temperatureEstimationData: fridge.temperatureEstimationData
     };
 }
 

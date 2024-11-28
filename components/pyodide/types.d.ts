@@ -33,6 +33,11 @@ export type BivariateCableData = {
 	attenuation: number
 };
 
+export type TempEstimationPoint = {
+	applied_power: number[],
+	measured_temperature: number[]
+}
+
 /**
  * Returns list of `passive` loads of cable from n stages
  *
