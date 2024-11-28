@@ -1039,6 +1039,7 @@ export default function SweepPage() {
           noiseTypes={noiseTypes}
           filterLines={filterLines}
           setModal={setModal1D}
+          sweepVariable={sweepConfig.stageID}
         />
       }
       {!sweepData1DErr && !sweepConfig.isTwoDimensional && modal1D != null &&
