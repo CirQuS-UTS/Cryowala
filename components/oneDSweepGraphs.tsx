@@ -12,11 +12,12 @@ type OneDGraphsProps = {
     lineSignalTypes: ("Drive" | "Flux" | "Output")[],
     noiseTypes: string[],
     filterLines: (data: SweepData[], graphID: number, lineSignalTypes: ("Drive" | "Flux" | "Output")[], selected: boolean[][][], showTotalLines: boolean[], nSelected?: boolean[]) => SweepData[],
-    setModal: React.Dispatch<React.SetStateAction<React.JSX.Element | null>>
+    setModal: React.Dispatch<React.SetStateAction<React.JSX.Element | null>>,
+    sweepVariable: string
 }
 
 // eslint-disable-next-line max-lines-per-function
-export default function OneDSweepGraphs({ sweepData, oneDGraphConfig, lineSignalTypes, noiseTypes, filterLines, setModal }: OneDGraphsProps): ReactNode {
+export default function OneDSweepGraphs({ sweepData, oneDGraphConfig, lineSignalTypes, noiseTypes, filterLines, setModal, sweepVariable }: OneDGraphsProps): ReactNode {
     const [ref, dimensions] = useDimensions<HTMLDivElement>();
 
     const fridge = useFridge();
@@ -53,7 +54,7 @@ export default function OneDSweepGraphs({ sweepData, oneDGraphConfig, lineSignal
                         stage: s.stage,
                         graphID: s.id,
                         type: 'heatLoad',
-                        xLabel: "Attenuation on " + s.stage,
+                        xLabel: "Attenuation on " + sweepVariable,
                         yLabel: "Heat Load",
                         linear: oneDGraphConfig.scaleLin,
                         setModal: setModal,
@@ -65,7 +66,7 @@ export default function OneDSweepGraphs({ sweepData, oneDGraphConfig, lineSignal
                         stage: s.stage,
                         graphID: s.id,
                         type: 'temperature',
-                        xLabel: "Attenuation on " + s.stage,
+                        xLabel: "Attenuation on " + sweepVariable,
                         yLabel: "Temperature",
                         linear: oneDGraphConfig.scaleLin,
                         setModal: setModal,
@@ -84,7 +85,7 @@ export default function OneDSweepGraphs({ sweepData, oneDGraphConfig, lineSignal
                         stage={'Noise'}
                         graphID={fridge.stages.length}
                         type={'heatLoad'}
-                        xLabel={"Attenuation"}
+                        xLabel={"Attenuation on " + sweepVariable}
                         yLabel={"Noise " + noiseTypes[oneDGraphConfig.noiseType]}
                         height={rowHeight}
                         width={noiseWidth}
@@ -98,7 +99,7 @@ export default function OneDSweepGraphs({ sweepData, oneDGraphConfig, lineSignal
                         stage={'Noise'}
                         graphID={fridge.stages.length}
                         type={'heatLoad'}
-                        xLabel={"Attenuation"}
+                        xLabel={"Attenuation on " + sweepVariable}
                         yLabel={"Noise " + noiseTypes[oneDGraphConfig.noiseType]}
                         height={rowHeight}
                         width={noiseWidth}
