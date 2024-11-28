@@ -12,6 +12,9 @@ const nextConfig = {
     reactStrictMode: true,
     trailingSlash: true,
     swcMinify: true,
+    images: {
+        unoptimized: true,
+    },
     webpack: (config, _) => {
         // Add Support to import the raw text from Python files
         config.module.rules.push({

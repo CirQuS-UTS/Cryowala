@@ -3,6 +3,8 @@
 import { useFridge } from "@/components/config/context";
 import Link from "next/link"
 import { PropsWithChildren } from "react";
+import largeLogo from "@/public/logo.png";
+import Image from "next/image";
 
 const links = [
   { href: "/fridge/configure", label: "Configure Fridge" },
@@ -24,6 +26,8 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-row flex-wrap items-center justify-between p-24 max-w-4xl mx-auto">
+      <Image src={largeLogo} alt="Fridge Logo" />
+
       {links.map(({ href, label }) => (
         <Button key={href}>
           <Link href={href}>{label}</Link>
