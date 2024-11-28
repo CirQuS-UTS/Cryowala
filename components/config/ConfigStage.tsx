@@ -125,13 +125,14 @@ export default function FridgeStages({ tooltips, setModal }: StageConfigProps): 
 
 // eslint-disable-next-line max-lines-per-function
 function interpretTempEstimatePoints(csvData: string[][]): TempEstimationPoint[] {
-  if (csvData.length < 2) throw new Error(`CSV data needs at least two points (rows).`);
+  if (csvData.length < 3) throw new Error(`CSV data needs at least two points (rows).`);
 
   const data: TempEstimationPoint[] = [];
 
   for (let i = 0; i < csvData.length; i++) {
 
     // for now, limiting to 5 stages, therefore 5 values for each, totaling 10 values expected
+    if (csvData[i].length < 2) break;
     if (csvData[i].length != 10) throw new Error(`CSV data does not have the correct number of columns to represent 5 stages at row ${i}.`);
 
     const powers: number[] = [];
