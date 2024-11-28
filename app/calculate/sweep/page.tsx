@@ -636,6 +636,8 @@ function useSweep(
   const model = useCryogenicModel();
   const fridge = useFridge();
 
+  model.loadTemperatureEstimation(fridge.temperatureEstimationData);
+
   const [result1D, setResult1D] = useState<SweepResult>([null, "loading"]);
   const [result2D, setResult2D] = useState<SweepResult2D>([null, "loading"]);
 

@@ -6,7 +6,7 @@ export interface CryoModelInterface {
 	fluxNoise: FluxNoiseFn;
 	cableAttenuation: CableAttenuationFn;
 	applyTStages: ApplyTStagesFn;
-	applyBoundedTStages: ApplyTStagesFn;
+	applyBoundedTStages: ApplyBoundedTStagesFn;
 	sweepModelInner: SweepModelInnerFn;
 	cableAttGeneration: CableAttGenerationFn;
 	noisePhotons: NoisePhotonsFn;
@@ -15,6 +15,7 @@ export interface CryoModelInterface {
 	sweepModelOuter: SweepModelOuterFn;
 	constraintGeneration: ConstraintGenerationFn;
 	specificConstraintGeneration: SpecificConstraintGenerationFn;
+	loadTemperatureEstimation: LoadTemperatureEstimationFn;
 }
 
 export type InnerPinDiameter = number;
@@ -135,9 +136,13 @@ export type CableAttenuationFn = (
 	f: number
 ) => number;
 
-export type ApplyTStagesFn = (
+export type ApplyBoundedTStagesFn = (
 	heatLoads: number[]
 ) => number[];
+
+export type ApplyTStagesFn = (
+	heatLoads: number[]
+) => { temperatures: number[], heatLoadLimits: { lowerLimit: number, upperLimit: number }[] };
 
 export type SweepModelInnerOutput = {
 	absHeatValues: number[][],
@@ -214,3 +219,7 @@ export type SpecificConstraintGenerationFn = (
 	x: number,
 	y: number
 ) => number[];
+
+export type LoadTemperatureEstimationFn = (
+	data: TempEstimationPoint[]
+) => void;

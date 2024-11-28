@@ -341,15 +341,17 @@ export type WiringDiagramProps = {
 };
 // eslint-disable-next-line max-lines-per-function
 export function WiringDiagram({ margin }: WiringDiagramProps) {
+  const fridge = useFridge();
   const model = useCryogenicModel();
   const { width: totalWidth, height: totalHeight } = useDimensions();
+
+  model.loadTemperatureEstimation(fridge.temperatureEstimationData);
 
   const width = totalWidth - margin.left - margin.right;
   const height = totalHeight - margin.top - margin.bottom;
 
   const LinkComponent = LinkVerticalStep;
 
-  const fridge = useFridge();
   const treeBreadth = fridge.lines.length;
   const treeDepth = fridge.stages.length + 1;
 

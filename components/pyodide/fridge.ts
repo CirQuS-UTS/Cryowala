@@ -599,7 +599,8 @@ export function sweepModel2D(model: CryoModelInterface, fridge: FridgeConfig, li
                 })
                 var newFridge = createNewFridge(fridge, lineID, stages, configs);
                 // initial temperature estimates (should instead update configuration file)
-                var t_est = [4.20111000e+1, 3.41026571e+0, 1.20520821e+0, 1.63359036e-1, 1.64774143e-2];//fridge.stages.map((stage) => stage.temperature);
+                // var t_est = [4.20111000e+1, 3.41026571e+0, 1.20520821e+0, 1.63359036e-1, 1.64774143e-2];
+                var t_est = fridge.stages.map((stage) => stage.temperature);
                 var load_matrix_0: number[][] = lineCount.map(() => stages.map(() => 0));
                 var delta_load_matrix: number[][] = lineCount.map(() => stages.map(() => 1));
                 const threshold: number = 0.0005;

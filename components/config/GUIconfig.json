@@ -346,11 +346,43 @@
 		"temperatureEstimationData": [
 			{
 				"applied_power": [
+					1e-10,
+					1e-10,
+					1e-2,
+					1e-10,
+					1e-10
+				],
+				"measured_temperature": [
+					4.20111000e+1,
+					3.41026571e+0,
+					1.20520821e+0,
+					1.63359036e-1,
+					1.64774143e-2
+				]
+			},
+			{
+				"applied_power": [
+					2.5,
+					0.5,
+					2.5e-2,
+					0.5e-3,
+					4e-4
+				],
+				"measured_temperature": [
+					4.20111000e+1,
+					3.41026571e+0,
+					1.20520821e+0,
+					1.63359036e-1,
+					1.64774143e-2
+				]
+			},
+			{
+				"applied_power": [
+					5,
 					1,
-					100,
-					30,
-					60,
-					12
+					5e-2,
+					1e-3,
+					8e-4
 				],
 				"measured_temperature": [
 					4.20111000e+1,

@@ -115,7 +115,7 @@ export default function FridgeStages({ tooltips, setModal }: StageConfigProps): 
         />
         <button
           className={styles.BUTTON}
-          onClick={() => alert(temperatureEstimationData.map((t, i) => `${(i != 0) ? '\n' : ''}Point ${i}\nApplied Powers: ${t.applied_power.toString()}\nMeasured Temperatures: ${t.measured_temperature.toString()}`))}
+          onClick={() => alert(temperatureEstimationData.map((t, i) => `${(i != 0) ? '\n' : ''}Point ${i + 1}\nApplied Powers: ${t.applied_power.toString()}\nMeasured Temperatures: ${t.measured_temperature.toString()}`))}
         >View Temperature Estimation Data</button>
       </div>
 
