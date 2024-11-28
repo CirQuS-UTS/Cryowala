@@ -1,5 +1,8 @@
 # Cryowala
 
+# Add Logo Image
+![Cryowala Logo](./app/logo.png)
+
 # Introduction
 This project aims to assist researchers work with cryogenic devices like quantum computers.
 It provides a set of tools to simulate heat load & noise in the cryogenic fridge and present that data visually.

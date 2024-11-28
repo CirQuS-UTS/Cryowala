@@ -1,64 +1,64 @@
 {
     "stages": {
-        "title": "Stages",
-        "index": "Index: Defines the order in which the stages are organised.",
-        "stage_names": "Defines the Stage Names",
-        "tempertures": "Defines the Temperatures",
-        "cooling_powers": "Defines the Cooling Powers",
-        "add_stage": "Adds another Stage to the Fridge.",
-        "remove_stage": "Removes the specified Stage from the Fridge."
+        "title": "Configure the stages/flanges of the cryostat",
+        "index": "The order in which the stages are organised",
+        "stage_names": "The names of the stages/flanges",
+        "tempertures": "The expected operating temperatures\n\n of the stages/flanges",
+        "cooling_powers": "The target cooling budgets for the flanges. \n\n\n\n Temperature estimates for any cryostat can be made after cooling power measurements \n\n from that cryostat are uploaded. This correlated data consists of sets of applied powers on \n\n all 5 stages of the cryostat and the corresponding measured temperatures of all 5 stages \n\n after the fridge reaches and equilibrium. The form of this data must be a .csv with 10 columns: \n\n - The first 5 columns give the applied power to all 5 stages in order [50K, 4K, Still, CP, MXC] \n\n - The second 5 columns give the measured equilibrium temperatures of all 5 stages \n\n To produce the best estimates, use the following applied powers: \n\n - Choose a \"base point\" which is a set of applied powers on each stage. Good choices for this \n\n base point at the target cooling budgets for each stage OR the expected heat loads on each \n\n stage after installing typical cabling \n\n - From this base point, sweep the applied power on each stage individually between 0W and \n\n the maximum allowed power on each stage \n\n This data is typically enough to estimate the relationship between power and heat on each \n\n stage as well as cross-stage effects. Because dilution refrigerators are designed such that the \n\n stages are well thermally isolated, cross-stage effects are usually small with the exception of \n\n correlations between temperatures and powers of the Still and MXC plates.",
+        "add_stage": "Adds another stage to the Fridge",
+        "remove_stage": "Removes the specified stage from the Fridge"
     },
     "cables": {
-        "title": "Cables",
-        "cable": "Defines the Cable",
-        "thermal_conductivity": "Defines the Thermal Conductivity",
-        "resistivity": "Defines the Resistivity",
-        "innerPinDiameter": "Defines the Inner Pin Diameter",
-        "dielectricDiameter": "Defines the Dielectric Diameter",
-        "outerConductorDiameter": "Defines the Outer Condunctor Diameter",
+        "title": "Configure specs of coaxial cables to be installed",
+        "cable": "Defines the names of the cable types",
+        "thermal_conductivity": "The bulk thermal conductivity of the cable at 4K in W•cm/K /n (considering the cable as a homogenous bulk material). \n\n \n\n Passive heat loads between two thermal anchors (see \n\n thermalisation below) are calculated using the cable thermal \n\n conductivity. They are calculated for each cable section (inner, \n\n dielectric, outer): \n```math\n P_\\mathrm{section}=\\frac{A_\\mathrm{section}}{L_\\mathrm{between\\, anchors}}\\int_{T_1}^{T_2}\\sigma_\\mathrm{section}(T)dT \n``` \n\n Where $L$ is the length of the cable between thermal anchors, \n\n $T_1$ and $T_2$ are the temperatures at the end points, and \n\n $\\sigma_\\mathrm{section}(T)$ is the thermal conductivity of \n\n that cable section. \n\n \n\n Note that the bulk thermal conductivity is converted to a \n\n thermal conductivity for each section by considering the \n\n proportion of the cross sectional area of the conducting \n\n sections (dielectric is ignored as it's thermal conductivity is \n\n typically much lower). \n\n \n\n Also note that the temperaturedependence of the thermal \n\n conductivity is estimated to be linear starting from 0 W•cm/K \n\n at 0K.",
+        "resistivity": "The bulk resistivity of the cable conductor at room temperature. \n\n The resistivity is used for scaling empirical measurements of Ohmic losses with DC current: \n```math\n P=IR^2_\\mathrm{eff} \\quad R_\\mathrm{eff} =\\rho/\\rho_0 L/L_0 A_0/A \n``` \n\n where $\\rho_0$, $L_0$, and $A_0$ are the resistivity, length, and cross-sectional area \n\n of the cables used to empirically measure the active heat load.",
+        "innerPinDiameter": "The inner conductor diameter of the cable",
+        "dielectricDiameter": "The outer diameter of the dielectric section",
+        "outerConductorDiameter": "The outer conductor diameter",
         "add_cable": "Adds another Cable to the Fridge.",
         "remove_cable": "Removes the specified Cable from the Fridge.",
         "cable_attenuation_points": {
-            "title": "Cable Attenuation Points",
-            "cable": "Defines the Cable",
-            "load_data": "Import CSV Data from a File",
-            "view_data": "View Cable Attenuation and Frequency Data"
+            "title": "Cable data giving the attenuation as a function of frequency",
+            "cable": "The cable type",
+            "load_data": "Import CSV Data from a File. \n\n\n\n The CSV file should contain bivariate data in two columns, \n\n where the first column is frequency in GHz and the second in the attenuation \n\n of the cable in dB/m at that frequency",
+            "view_data": "View imported bivariate data points"
         }
     },
     "lines": {
-        "title": "Lines",
-        "line_name": "Defines the Line Name",
-        "signal_type": "Defines the Signal Type",
-        "line_count": "Defines the Line Count",
-        "current_type": "Defines the Current Type",
-        "signal_power": "Defines the Signal Power",
-        "signal_frequency": "Defines the Signal Frequency",
-        "input_current": "Defines the Input Current",
-        "add_line": "Adds another Line to the Fridge.",
-        "remove_line": "Removes the specified Line from the Fridge."
+        "title": "Line types of the fridge, defined by the types of signals that they carry",
+        "line_name": "The name of the line types",
+        "signal_type": "The broad category of line: \n\n - Flux ≈ DC \n\n - Drive ≈ RF \n\n - Output ≈ Readout",
+        "line_count": "The number of lines of this type",
+        "current_type": "The type of signal current used",
+        "signal_power": "The signal power for AC lines in Watts",
+        "signal_frequency": "The signal frequency",
+        "input_current": "The input current for DC lines in Amps",
+        "add_line": "Adds another Line to the Fridge",
+        "remove_line": "Removes the specified Line from the Fridge"
     },
     "segments": {
         "cable_types": {
-            "title": "Segment Cable Types",
-            "stage": "Defines the Stage",
-            "line": "Defines the Line"
+            "title": "Cable types for each cable segment in the fridge",
+            "stage": "The cable segment",
+            "line": ""
         },
         "lengths": {
-            "title": "Segment Lengths",
-            "stage": "Defines the Stage",
-            "line": "Defines the Line"
+            "title": "Lengths for each cable segment",
+            "stage": "The cable segment",
+            "line": ""
         },
         "attenuations": {
-            "title": "Segment Attenuations",
-            "stage": "Defines the Stage",
-            "line": "Defines the Line"
+            "title": "Attenuation down each line",
+            "stage": "The stage\flange of the fridge",
+            "line": ""
         },
         "line_thermalisation": {
-            "title": "Line Thermalisation",
-            "stage": "Defines the Stage",
-            "inner": "Defines the Inner Thermalisation",
-            "dielectric": "Defines the Dielectric Thermalisation",
-            "outer": "Defines the Outer Thermalisation"
+            "title": "Thermalisation of the coaxial cables. Thermalisation refers to whether \n\n there is a sufficient thermal link between different sections of the cable \n\n (inner, dielectric, outer) and the fridge stages. For example, typically without \n\n an attenuator, the inner conductor has poor thermal conductivity to the \n\n fridge stages. \n\n \n\n Thermal anchoring is an important behaviour stemming from thermalisation \n\n where we assume that a cable section's temperature is tied to a stage if there \n\n is good thermalisation between them, otherwise heat doesn't flow from that \n\n cable section to the stage. Passive heat loads are calculated individually for \n\n each cable section considering thermal anchors; heat flow is calculated from \n\n one thermal anchor to another and stages which the cable is poorly thermalised to are ignored: \n```math\n P_\\mathrm{section}=\\frac{A_\\mathrm{section}}{L_\\mathrm{between\\, anchors}}\\int_{T_1}^{T_2}\\sigma_\\mathrm{section}(T)dT \n```",
+            "stage": "The stage\flange of the fridge",
+            "inner": "The thermalisation of the inner conductor",
+            "dielectric": "The thermalisation of the dielectric",
+            "outer": "The thermalisation of the outer conductor"
         }
     }
 }
