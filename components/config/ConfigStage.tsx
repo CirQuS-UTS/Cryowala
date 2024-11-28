@@ -7,7 +7,9 @@ import { NumericInputColumn } from "@/components/inputs/numeric";
 import { DeleteButtonColumn, FormGroup, FormSection, findNextId } from "@/components/config/common";
 import { readCSVFile } from "@/components/config/ConfigCable";
 import { useFeatureFlags } from "@/components/config/featureFlagContext";
-import { UploadCSVButton } from "../inputs/importCSVButton";
+import { UploadCSVButton } from "@/components/inputs/importCSVButton";
+import { TempEstimationPoint } from "@/components/pyodide/types";
+import styles from "@/components/config/Config.module.css";
 
 function getNewStage(stages: StageConfig[], lines: LineConfig[]): [StageConfig, SegmentConfig[]] {
   const nextIndex = stages.length > 0 ? Math.ceil(Math.max(...stages.map((item: StageConfig) => item.index))) + 1 : 0;
@@ -48,7 +50,7 @@ type StageConfigProps = {
 
 // eslint-disable-next-line max-lines-per-function
 export default function FridgeStages({ tooltips, setModal }: StageConfigProps): JSX.Element {
-  const { stages, setStages, lines, segments, setSegments } = useFridge();
+  const { stages, setStages, lines, segments, setSegments, temperatureEstimationData, setTemperatureEstimationData } = useFridge();
   const updateStageId = (index: number, oldId: string, value: string) => {
     setSegments(segments.map((item: SegmentConfig) => item.stageId !== oldId ? item : { ...item, stageId: value }));
     updateStage(index, "id", value);
@@ -82,7 +84,7 @@ export default function FridgeStages({ tooltips, setModal }: StageConfigProps): 
             active: true,
             data: dataString,
             onSubmit: (dataStr: string) => {
-              console.log(fromStringToArray(dataStr));
+              setTemperatureEstimationData(fromStringToArray(dataStr));
             }
           })
         } catch (err) {
@@ -105,46 +107,48 @@ export default function FridgeStages({ tooltips, setModal }: StageConfigProps): 
         {!featureFlags.staticStageCount && <DeleteButtonColumn<StageConfig> label="Stage" tooltip={tooltips.remove_stage} data={stages} onClick={removeStage} />}
       </FormGroup>
 
-      <UploadCSVButton
-        label={"Load Temperature Estimation Data"}
-        message={"Load Temperature Estimation Data CSV File"}
-        onClick={onFileSelected}
-      />
+      <div className={'flex flex-row w-full justify-center items-center'}>
+        <UploadCSVButton
+          label={"Load Temperature Estimation Data"}
+          message={"Load Temperature Estimation Data CSV File"}
+          onClick={onFileSelected}
+        />
+        <button
+          className={styles.BUTTON}
+          onClick={() => alert(temperatureEstimationData.map((t, i) => `${(i != 0) ? '\n' : ''}Point ${i + 1}\nApplied Powers: ${t.applied_power.toString()}\nMeasured Temperatures: ${t.measured_temperature.toString()}`))}
+        >View Temperature Estimation Data</button>
+      </div>
 
     </FormSection>
   );
 }
 
-type TempEstimationPoint = {
-  point_powers: number[],
-  temperatures: number[]
-}
-
 // eslint-disable-next-line max-lines-per-function
 function interpretTempEstimatePoints(csvData: string[][]): TempEstimationPoint[] {
-  if (csvData.length < 2) throw new Error(`CSV data needs at least two points (rows).`);
+  if (csvData.length < 3) throw new Error(`CSV data needs at least two points (rows).`);
 
   const data: TempEstimationPoint[] = [];
 
   for (let i = 0; i < csvData.length; i++) {
 
     // for now, limiting to 5 stages, therefore 5 values for each, totaling 10 values expected
+    if (csvData[i].length < 2) break;
     if (csvData[i].length != 10) throw new Error(`CSV data does not have the correct number of columns to represent 5 stages at row ${i}.`);
 
-    const point_powers: number[] = [];
+    const powers: number[] = [];
     const temperatures: number[] = [];
 
     for (let j = 0; j < 5; j++) {
-      point_powers.push(parseFloat(csvData[i][j]));
+      powers.push(parseFloat(csvData[i][j]));
       temperatures.push(parseFloat(csvData[i][j + 5]));
     }
 
-    if (point_powers.every((p) => isNaN(p))) {
-      throw new Error(`Some of the Point Powers values: '${point_powers}' are not a number.`);
+    if (powers.every((p) => isNaN(p))) {
+      throw new Error(`Some of the Point Powers values: '${powers}' are not a number.`);
     } else if (temperatures.every((t) => isNaN(t))) {
       throw new Error(`Some of the Temperature values: '${temperatures}' are not a number.`);
     } else {
-      const point: TempEstimationPoint = { point_powers, temperatures };
+      const point: TempEstimationPoint = { applied_power: powers, measured_temperature: temperatures };
       data.push(point);
     }
   }
@@ -165,13 +169,13 @@ function dataToString(data: TempEstimationPoint[]): string {
 function getPAndTValueString(dataPoint: TempEstimationPoint, end: boolean): string {
   let pString: string = "";
   let tString: string = "";
-  const length = (dataPoint.point_powers.length + dataPoint.temperatures.length) / 2;
+  const length = (dataPoint.applied_power.length + dataPoint.measured_temperature.length) / 2;
   for (let j = 0; j < length - 1; j++) {
-    pString += dataPoint.point_powers[j] + ",";
-    tString += dataPoint.temperatures[j] + ",";
+    pString += dataPoint.applied_power[j] + ",";
+    tString += dataPoint.measured_temperature[j] + ",";
   }
-  pString += dataPoint.point_powers[length - 1] + ",";
-  tString += dataPoint.temperatures[length - 1];
+  pString += dataPoint.applied_power[length - 1] + ",";
+  tString += dataPoint.measured_temperature[length - 1];
   return "(" + pString + tString + ((end) ? ")" : "),")
 }
 
@@ -187,25 +191,25 @@ function fromStringToArray(data: string): TempEstimationPoint[] {
       const noBrackets = lines[i].replaceAll('(', '').replaceAll(')', '');
       const values = noBrackets.split(',')
 
-      const point_powers: number[] = [];
+      const powers: number[] = [];
       const temperatures: number[] = [];
 
       const stageNum = values.length / 2;
 
       for (let j = 0; j < stageNum; j++) {
-        point_powers.push(parseFloat(values[j]));
+        powers.push(parseFloat(values[j]));
         temperatures.push(parseFloat(values[j + stageNum]));
       }
 
-      if (point_powers.every((p) => isNaN(p))) {
-        throw new Error(`Some of the values ${point_powers} could not be interpreted as a number.`)
+      if (powers.every((p) => isNaN(p))) {
+        throw new Error(`Some of the values ${powers} could not be interpreted as a number.`)
       } else if (temperatures.every((t) => isNaN(t))) {
         throw new Error(`Some of the values ${temperatures} could not be interpreted as a number.`)
       }
 
       // TODO: more handeling for if the error is not in the first non whitespace charcter of f or a.
 
-      result.push({ point_powers, temperatures });
+      result.push({ applied_power: powers, measured_temperature: temperatures });
     }
 
     return result;
