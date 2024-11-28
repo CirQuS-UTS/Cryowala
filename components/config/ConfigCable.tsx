@@ -13,9 +13,9 @@ type DiameterFieldDescription = {
   label: string,
 }
 const diameters: DiameterFieldDescription[] = [
-  { name: "innerPinDiameter", label: "Inner Pin Diameter" },
-  { name: "dielectricDiameter", label: "Dielectric Diameter" },
-  { name: "outerConductorDiameter", label: "Outer Conductor Diameter" },
+  { name: "innerPinDiameter", label: "Inner Pin Dia. (m)" },
+  { name: "dielectricDiameter", label: "Dielectric Dia. (m)" },
+  { name: "outerConductorDiameter", label: "Outer Conductor Dia. (m)" },
 ]
 
 const attenuationPoints: number[] = Array(5).fill(0).map((_, i) => i + 1);
@@ -126,17 +126,17 @@ export default function FridgeCables({ tooltips, setModal }: CableConfigProps): 
 
   return (
     <FormSection>
-      <FormGroup title="Cables" tooltip={tooltips.title} buttonLabel="Add Cable" buttonTooltip={tooltips.add_cable} onAddClicked={addCable} >
-        <UniqueInputColumn<CableConfig> label="Cable" tooltip={tooltips.cable} data={cables} valueGetter={(item) => item.id.toString()} valueSetter={(index, item, value) => updateCableId(index, item.id, value)} isUnique={(value: string) => cables.every((item: CableConfig) => item.id !== value)} />
-        <NumericInputColumn<CableConfig> label="Thermal Conductivity" tooltip={tooltips.thermal_conductivity} data={cables} valueGetter={(item) => item.thermalConductivityValue} valueSetter={(index, item, value) => updateCable(index, "thermalConductivityValue", value)} />
-        <NumericInputColumn<CableConfig> label="Resistivity" tooltip={tooltips.resistivity} data={cables} valueGetter={(item) => item.rho} valueSetter={(index, item, value) => updateCable(index, "rho", value)} />
+      <FormGroup title="Cable Types" tooltip={tooltips.title} buttonLabel="Add Cable" buttonTooltip={tooltips.add_cable} onAddClicked={addCable} >
+        <UniqueInputColumn<CableConfig> label="Cable Names" tooltip={tooltips.cable} data={cables} valueGetter={(item) => item.id.toString()} valueSetter={(index, item, value) => updateCableId(index, item.id, value)} isUnique={(value: string) => cables.every((item: CableConfig) => item.id !== value)} />
+        <NumericInputColumn<CableConfig> label="Thermal Conductivity (W•cm/K)" tooltip={tooltips.thermal_conductivity} data={cables} valueGetter={(item) => item.thermalConductivityValue} valueSetter={(index, item, value) => updateCable(index, "thermalConductivityValue", value)} />
+        <NumericInputColumn<CableConfig> label="Resistivity (Ω⋅m)" tooltip={tooltips.resistivity} data={cables} valueGetter={(item) => item.rho} valueSetter={(index, item, value) => updateCable(index, "rho", value)} />
         {diameters.map(({ name, label }, diameterIndex) => (
           <NumericInputColumn<CableConfig> key={`cable-${name}`} label={label} tooltip={tooltips[name]} data={cables} valueGetter={(item) => item.diameters[diameterIndex]} valueSetter={(index, item, value) => updateDiameter(index, diameterIndex, value)} />
         ))}
         <DeleteButtonColumn<CableConfig> label="Cable" data={cables} tooltip={tooltips.remove_cable} onClick={removeCable} />
       </FormGroup>
 
-      <FormGroup title="Cable Attenuation Points" tooltip={tooltips.cable_attenuation_points.title} >
+      <FormGroup title="Cable Attenuation Data" tooltip={tooltips.cable_attenuation_points.title} >
         <InputColumn<CableConfig> key="cable-attenuation-id" label="Cable" tooltip={tooltips.cable_attenuation_points.cable} data={cables} valueGetter={(item: CableConfig) => item.id.toString()} valueSetter={() => undefined} disabled={true} />
         <UploadButtonColumn<CableConfig> label={'Load Cable Attenuation Data'} tooltip={tooltips.cable_attenuation_points.load_data} message="Import CSV File" data={cables} onClick={onFileSelected} />
         <ButtonColumn<CableConfig> label={'View Cable Attenuation Data'} tooltip={tooltips.cable_attenuation_points.view_data} message="View Frequency & Attenuation Points" data={cables} onClick={displayCableValues} />

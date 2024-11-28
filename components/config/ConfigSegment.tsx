@@ -52,21 +52,21 @@ export default function FridgeSegments({ tooltips }: SegmentConfigProps): JSX.El
 
   return (
     <FormSection>
-      <FormGroup title="Segments Cable Types" tooltip={tooltips.cable_types.title} >
-        <InputColumn<StageConfig> label="Stage" tooltip={tooltips.cable_types.stage} data={stages} valueGetter={(item: StageConfig) => item.id} valueSetter={() => undefined} disabled={true} />
+      <FormGroup title="Cable Segment Types" tooltip={tooltips.cable_types.title} >
+        <InputColumn<StageConfig> label="Stage Below Cable" tooltip={tooltips.cable_types.stage} data={stages} valueGetter={(item: StageConfig) => item.id} valueSetter={() => undefined} disabled={true} />
         {lines.map((line: LineConfig) => (
           <SelectColumn<SegmentConfig> key={`segment-${line.id}`} label={`Line: ${line.id}`} tooltip={tooltips.cable_types.line} data={filterSegmentsByLine(line.id)} valueGetter={(item: SegmentConfig) => item.cableId} valueSetter={(index, item, value) => updateSegment(item, "cableId", value)} options={cables.map((cable: CableConfig) => cable.id)} />
         ))}
       </FormGroup>
 
-      <FormGroup title="Segments Lengths" tooltip={tooltips.lengths.title} >
+      <FormGroup title="Segment Lengths" tooltip={tooltips.lengths.title} >
         <InputColumn<StageConfig> label="Stage" tooltip={tooltips.lengths.stage} data={stages} valueGetter={(item: StageConfig) => item.id} valueSetter={() => undefined} disabled={true} />
         {lines.map((line: LineConfig) => (
           <NumericInputColumn<SegmentConfig> key={`segment-${line.id}`} label={`Line: ${line.id}`} tooltip={tooltips.lengths.line} data={filterSegmentsByLine(line.id)} valueGetter={(item: SegmentConfig) => item.length} valueSetter={(index, item, value) => updateSegment(item, "length", value)} />
         ))}
       </FormGroup>
 
-      <FormGroup title="Segments Attenuations" tooltip={tooltips.attenuations.title} >
+      <FormGroup title="Attenuation" tooltip={tooltips.attenuations.title} >
         <InputColumn<StageConfig> label="Stage" tooltip={tooltips.attenuations.stage} data={stages} valueGetter={(item: StageConfig) => item.id} valueSetter={() => undefined} disabled={true} />
         {lines.map((line: LineConfig) => (
           <NumericInputColumn<SegmentConfig> key={`segment-${line.id}`} label={`Line: ${line.id}`} tooltip={tooltips.attenuations.line} data={filterSegmentsByLine(line.id)} valueGetter={(item: SegmentConfig) => item.attenuation} valueSetter={(index, item, value) => updateSegment(item, "attenuation", value)} />

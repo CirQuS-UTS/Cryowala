@@ -70,14 +70,14 @@ export default function FridgeLines({ tooltips }: LineConfigProps): JSX.Element 
 
   return (
     <FormSection>
-      <FormGroup title="Lines" tooltip={tooltips.title} buttonLabel="Add Line" buttonTooltip={tooltips.add_line} onAddClicked={addLine} >
+      <FormGroup title="Line Types" tooltip={tooltips.title} buttonLabel="Add Line" buttonTooltip={tooltips.add_line} onAddClicked={addLine} >
         <UniqueInputColumn<LineConfig> label="Line Names" tooltip={tooltips.line_name} data={lines} valueGetter={(item: LineConfig) => item.id} valueSetter={(index, item, value) => updateLineId(index, item.id, value)} isUnique={(value: string) => lines.every((item: LineConfig) => item.id !== value)} />
         <SelectColumn<LineConfig> label="Signal Type" tooltip={tooltips.signal_type} data={lines} valueGetter={(item: LineConfig) => item.signalType} valueSetter={(index, item, value) => updateLine(index, "signalType", value)} options={signalTypes} />
         <NumericInputColumn<LineConfig> label="Line Count" tooltip={tooltips.line_count} data={lines} valueGetter={(item: LineConfig) => item.count} valueSetter={(index, item, value) => updateLine(index, "count", value)} />
         <SelectColumn<LineConfig> label="Current Type" tooltip={tooltips.current_type} data={lines} valueGetter={(item: LineConfig) => item.currentType} valueSetter={(index, item, value) => updateLine(index, "currentType", value)} options={currentTypes} />
-        <NumericInputColumn<LineConfig> label="Signal Power" tooltip={tooltips.signal_power} data={lines} valueGetter={(item: LineConfig) => item.signalPower} valueSetter={(index, item, value) => updateLine(index, "signalPower", value)} propGenerator={(index: number, item: LineConfig) => ({ disabled: item.currentType !== "AC" })} />
-        <NumericInputColumn<LineConfig> label="Signal Frequency" tooltip={tooltips.signal_frequency} data={lines} valueGetter={(item: LineConfig) => item.signalFrequency} valueSetter={(index, item, value) => updateLine(index, "signalFrequency", value)} propGenerator={(index: number, item: LineConfig) => ({ disabled: item.currentType !== "AC" })} />
-        <NumericInputColumn<LineConfig> label="Input Current" tooltip={tooltips.input_current} data={lines} valueGetter={(item: LineConfig) => item.inputCurrent} valueSetter={(index, item, value) => updateLine(index, "inputCurrent", value)} propGenerator={(index: number, item: LineConfig) => ({ disabled: item.currentType !== "DC" })} />
+        <NumericInputColumn<LineConfig> label="Signal Power (W)" tooltip={tooltips.signal_power} data={lines} valueGetter={(item: LineConfig) => item.signalPower} valueSetter={(index, item, value) => updateLine(index, "signalPower", value)} propGenerator={(index: number, item: LineConfig) => ({ disabled: item.currentType !== "AC" })} />
+        <NumericInputColumn<LineConfig> label="Signal Frequency (GHz)" tooltip={tooltips.signal_frequency} data={lines} valueGetter={(item: LineConfig) => item.signalFrequency} valueSetter={(index, item, value) => updateLine(index, "signalFrequency", value)} propGenerator={(index: number, item: LineConfig) => ({ disabled: item.currentType !== "AC" })} />
+        <NumericInputColumn<LineConfig> label="Input Current (A)" tooltip={tooltips.input_current} data={lines} valueGetter={(item: LineConfig) => item.inputCurrent} valueSetter={(index, item, value) => updateLine(index, "inputCurrent", value)} propGenerator={(index: number, item: LineConfig) => ({ disabled: item.currentType !== "DC" })} />
         <DeleteButtonColumn<LineConfig> label="Line" data={lines} tooltip={tooltips.remove_line} onClick={removeLine} />
       </FormGroup>
     </FormSection>
