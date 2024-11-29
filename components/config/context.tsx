@@ -4,14 +4,12 @@ import { FC, PropsWithChildren, createContext, useContext, useEffect, useMemo, u
 import defaultFridge from "@/components/config/GUIconfig.json"
 import { FridgeConfig, StageConfig, CableConfig, LineConfig, SegmentConfig } from "@/components/pyodide/fridge.d"
 import { useFeatureFlags } from "./featureFlagContext"
-import { TempEstimationPoint } from "@/components/pyodide/types"
 
 export type FridgeContext = FridgeConfig & {
   setStages: (stages: StageConfig[]) => void,
   setCables: (cables: CableConfig[]) => void,
   setLines: (lines: LineConfig[]) => void,
   setSegments: (segments: SegmentConfig[]) => void,
-  setTemperatureEstimationData: (setTemperatureEstimationData: TempEstimationPoint[]) => void,
   import: (fridge: FridgeConfig) => void,
   export: () => FridgeConfig
   reset: () => void,
@@ -24,12 +22,10 @@ const defaultFridgeContext: FridgeContext = {
   cables: defaultFridge.FridgeUTS.cables as CableConfig[],
   lines: defaultFridge.FridgeUTS.lines as LineConfig[],
   segments: defaultFridge.FridgeUTS.segments as SegmentConfig[],
-  temperatureEstimationData: defaultFridge.FridgeUTS.temperatureEstimationData as TempEstimationPoint[],
   setStages: () => { },
   setCables: () => { },
   setLines: () => { },
   setSegments: () => { },
-  setTemperatureEstimationData: () => { },
   import: () => { },
   export: () => defaultFridge.FridgeUTS as FridgeConfig,
   reset: () => { },
@@ -46,7 +42,6 @@ export const FridgeProvider: FC<PropsWithChildren> = ({ children }) => {
   const [cables, setCables] = useState<CableConfig[]>([]);
   const [lines, setLines] = useState<LineConfig[]>([]);
   const [segments, setSegments] = useState<SegmentConfig[]>([]);
-  const [tempEstData, setTempEstData] = useState<TempEstimationPoint[]>([]);
 
   const featureFlags = useFeatureFlags();
 
@@ -63,12 +58,10 @@ export const FridgeProvider: FC<PropsWithChildren> = ({ children }) => {
     setCables(fridge.cables);
     setLines(fridge.lines);
     setSegments(fridge.segments);
-    setTempEstData(fridge.temperatureEstimationData);
-  }, [setStages, setCables, setLines, setSegments, setTempEstData]);
-
+  }, [setStages, setCables, setLines, setSegments]);
   const exportConfig = useMemo(() => () => {
-    return { stages, cables, lines, segments, temperatureEstimationData: tempEstData };
-  }, [stages, cables, lines, segments, tempEstData]);
+    return { stages, cables, lines, segments };
+  }, [stages, cables, lines, segments]);
 
   const reset = useMemo(() => () => {
     importConfig(defaultFridge.FridgeUTS as FridgeConfig);
@@ -96,8 +89,6 @@ export const FridgeProvider: FC<PropsWithChildren> = ({ children }) => {
     setLines: setLines,
     segments: segments,
     setSegments: setSegments,
-    temperatureEstimationData: tempEstData,
-    setTemperatureEstimationData: setTempEstData,
     import: importConfig,
     export: exportConfig,
     reset: reset,

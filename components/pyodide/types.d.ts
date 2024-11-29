@@ -6,7 +6,7 @@ export interface CryoModelInterface {
 	fluxNoise: FluxNoiseFn;
 	cableAttenuation: CableAttenuationFn;
 	applyTStages: ApplyTStagesFn;
-	applyBoundedTStages: ApplyBoundedTStagesFn;
+	applyBoundedTStages: ApplyTStagesFn;
 	sweepModelInner: SweepModelInnerFn;
 	cableAttGeneration: CableAttGenerationFn;
 	noisePhotons: NoisePhotonsFn;
@@ -15,7 +15,6 @@ export interface CryoModelInterface {
 	sweepModelOuter: SweepModelOuterFn;
 	constraintGeneration: ConstraintGenerationFn;
 	specificConstraintGeneration: SpecificConstraintGenerationFn;
-	loadTemperatureEstimation: LoadTemperatureEstimationFn;
 }
 
 export type InnerPinDiameter = number;
@@ -33,11 +32,6 @@ export type BivariateCableData = {
 	frequency: number,
 	attenuation: number
 };
-
-export type TempEstimationPoint = {
-	applied_power: number[],
-	measured_temperature: number[]
-}
 
 /**
  * Returns list of `passive` loads of cable from n stages
@@ -136,13 +130,9 @@ export type CableAttenuationFn = (
 	f: number
 ) => number;
 
-export type ApplyBoundedTStagesFn = (
-	heatLoads: number[]
-) => number[];
-
 export type ApplyTStagesFn = (
 	heatLoads: number[]
-) => { temperatures: number[], heatLoadLimits: { lowerLimit: number, upperLimit: number }[] };
+) => number[];
 
 export type SweepModelInnerOutput = {
 	absHeatValues: number[][],
@@ -219,7 +209,3 @@ export type SpecificConstraintGenerationFn = (
 	x: number,
 	y: number
 ) => number[];
-
-export type LoadTemperatureEstimationFn = (
-	data: TempEstimationPoint[]
-) => void;

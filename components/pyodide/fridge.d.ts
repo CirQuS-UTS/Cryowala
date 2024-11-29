@@ -1,11 +1,10 @@
-import { Diameters, ThermalConductivityValue, BivariateCableData, TempEstimationPoint } from "./types";
+import { Diameters, ThermalConductivityValue, BivariateCableData } from "./types";
 
 export type FridgeConfig = {
     stages: StageConfig[];
     cables: CableConfig[];
     lines: LineConfig[];
     segments: SegmentConfig[];
-    temperatureEstimationData: TempEstimationPoint[];
 };
 
 export type StageId = string; // e.g. "50K", "MXC" or "Still"
