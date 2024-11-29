@@ -94,8 +94,6 @@ function FridgeGraphs() {
   const model = useCryogenicModel();
   const fridge = useFridge();
 
-  model.loadTemperatureEstimation(fridge.temperatureEstimationData);
-
   const dimensions = useDimensions();
 
   const numGraphs = 3;

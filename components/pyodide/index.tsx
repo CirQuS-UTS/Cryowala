@@ -19,9 +19,7 @@ import {
     SweepModelOuterFn,
     ConstraintGenerationFn,
     SpecificConstraintGenerationFn,
-    BivariateCableData,
-    ApplyBoundedTStagesFn,
-    LoadTemperatureEstimationFn
+    BivariateCableData
 } from "./types";
 import { LineLoadOutput } from "@/components/pyodide/fridge.d"
 import { PythonRuntime, usePythonRuntime } from "@/lib/pythonrt";
@@ -188,12 +186,37 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
         return this.runJSON(code);
     }
 
-    applyBoundedTStages: ApplyBoundedTStagesFn = (heatLoads: number[]) => {
+    applyBoundedTStages: ApplyTStagesFn = (heatLoads: number[]) => {
+        const heatLoadLimits: { stage: string, lowerLimit: number, upperLimit: number }[] = [
+            {
+                stage: "50K",
+                lowerLimit: 0,
+                upperLimit: 5
+            },
+            {
+                stage: "4K",
+                lowerLimit: 0,
+                upperLimit: 1
+            },
+            {
+                stage: "Still",
+                lowerLimit: 1e-2,
+                upperLimit: 5e-2
+            },
+            {
+                stage: "CP",
+                lowerLimit: 0,
+                upperLimit: 1e-3
+            },
+            {
+                stage: "MXC",
+                lowerLimit: 0,
+                upperLimit: 8e-4
+            },
+        ];
 
         // only works for 5 stage fridge where the middle stage is the still stage.
         const heatLoadsLocal = heatLoads.map((h, i) => (i == 2) ? Math.max(heatLoads[i], 3e-2) : h);
-
-        const { temperatures, heatLoadLimits } = this.applyTStages(heatLoadsLocal)
 
         const errors: string[] = [];
 
@@ -206,7 +229,7 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
                     `Heat Load ${heatLoadsLocal[i]} exceeds the range ` +
                     `[${heatLoadLimits[i].lowerLimit},` +
                     ` ${heatLoadLimits[i].upperLimit}]` +
-                    ` for stage ${i}\n`
+                    ` for stage ${heatLoadLimits[i].stage}\n`
                 )
             };
         }
@@ -216,7 +239,7 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
             return this.nanValueArray(heatLoads);
         }
 
-        return temperatures;
+        return this.applyTStages(heatLoadsLocal)
     }
 
     // eslint-disable-next-line max-lines-per-function
@@ -229,25 +252,15 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
             total = []
             heat_loads = ${jsToPy(heatLoads)}
         
-            for i in range(len(heat_loads)):
-                total.append(t_funcs(i, heat_loads))
+            total.append(param_functions.T_funcs(0, heat_loads))
+            total.append(param_functions.T_funcs(1, heat_loads))
+            total.append(param_functions.T_funcs(2, heat_loads))
+            total.append(param_functions.T_funcs(3, heat_loads))
+            total.append(param_functions.T_funcs(4, heat_loads))
     
             json.dumps(total)
             `
-
-        const bounds: number[][] = this.pyodide?.globals.get('bounds').toJs();
-
-        const heatLoadLimits: { lowerLimit: number, upperLimit: number }[] = bounds.map((b) => {
-            return {
-                lowerLimit: b[0],
-                upperLimit: b[1]
-            }
-        });
-
-        return {
-            temperatures: this.runJSON(code),
-            heatLoadLimits
-        };
+        return this.runJSON(code);
     }
 
     // eslint-disable-next-line max-lines-per-function
@@ -601,25 +614,6 @@ export class CryoModel extends PythonRuntime implements CryoModelInterface {
         json.dumps(configs)
         `
         return this.runJSON(code);
-    }
-
-    loadTemperatureEstimation: LoadTemperatureEstimationFn = (data) => {
-
-        const formattedData: number[][] = data.map((row) => [...row.applied_power, ...row.measured_temperature])
-
-        const jsToPy = javascriptToPython;
-        const code = `
-        from CryowalaCore import param_functions
-        import numpy as np
-        import pandas as pd
-        import json
-
-        data = np.array(${jsToPy(formattedData)})
-
-        t_funcs, bounds = param_functions.generate_t_funcs(data)
-
-        `
-        this.run(code);
     }
 }
 

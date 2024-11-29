@@ -24,19 +24,19 @@ export function UploadCSVButton({ label, tooltip, message, onClick, ...props }: 
     }
 
     return (
-        <>
+        <div className={'flex flex-row w-full justify-center items-center'}>
             <input
                 type="file"
                 ref={inputRef}
                 hidden={true}
                 onChange={onFileSelected}
             />
-            <button className={styles.BUTTON}
+            <button className={[styles.BUTTON].join(" ")}
                 onClick={() => inputRef?.current?.click()}
                 {...props}
             >
                 {message}
             </button>
-        </>
+        </div>
     );
 }
