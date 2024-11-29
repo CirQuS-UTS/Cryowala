@@ -98,7 +98,7 @@ export default function FridgeStages({ tooltips, setModal }: StageConfigProps): 
   return (
     <FormSection>
       <FormGroup title="Cryostat Stages" tooltip={tooltips.title} buttonLabel="Add Stage" buttonTooltip={tooltips.add_stage} onAddClicked={(featureFlags.staticStageCount) ? undefined : addStage} >
-        <NumericInputColumn<StageConfig> label="Index" tooltip={tooltips.index} data={stages} valueGetter={(item: StageConfig) => item.index} valueSetter={(index, item, value) => updateStage(index, "index", value)} />
+        <NumericInputColumn<StageConfig> label="Index" tooltip={tooltips.index} data={stages} valueGetter={(item: StageConfig) => item.index} valueSetter={(index, item, value) => updateStage(index, "index", value)} disabled={featureFlags.staticStageCount} />
         <UniqueInputColumn<StageConfig> label="Stage Names" tooltip={tooltips.stage_names} data={stages} valueGetter={(item: StageConfig) => item.id} valueSetter={(index, item, value) => updateStageId(index, item.id, value)} isUnique={(value: string) => stages.every((item: StageConfig) => item.id !== value)} />
         <NumericInputColumn<StageConfig> label="Temperatures (k)" tooltip={tooltips.tempertures} data={stages} valueGetter={(item: StageConfig) => item.temperature} valueSetter={(index, item, value) => updateStage(index, "temperature", value)} />
         <NumericInputColumn<StageConfig> label="Cooling Budgets (W)" tooltip={tooltips.cooling_powers} data={stages} valueGetter={(item: StageConfig) => item.coolingPower} valueSetter={(index, item, value) => updateStage(index, "coolingPower", value)} />
