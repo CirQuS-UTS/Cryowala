@@ -106,19 +106,6 @@ export default function FridgeStages({ tooltips, setModal }: StageConfigProps): 
         <NumericInputColumn<StageConfig> label="Cooling Budgets (W)" tooltip={tooltips.cooling_powers} data={stages} valueGetter={(item: StageConfig) => item.coolingPower} valueSetter={(index, item, value) => updateStage(index, "coolingPower", value)} />
         {!featureFlags.staticStageCount && <DeleteButtonColumn<StageConfig> label="Stage" tooltip={tooltips.remove_stage} data={stages} onClick={removeStage} />}
       </FormGroup>
-
-      <div className={'flex flex-row w-full justify-center items-center'}>
-        <UploadCSVButton
-          label={"Load Temperature Estimation Data"}
-          message={"Load Temperature Estimation Data CSV File"}
-          onClick={onFileSelected}
-        />
-        <button
-          className={styles.BUTTON}
-          onClick={() => alert(temperatureEstimationData.map((t, i) => `${(i != 0) ? '\n' : ''}Point ${i + 1}\nApplied Powers: ${t.applied_power.toString()}\nMeasured Temperatures: ${t.measured_temperature.toString()}`))}
-        >View Temperature Estimation Data</button>
-      </div>
-
     </FormSection>
   );
 }
