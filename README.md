@@ -1,7 +1,7 @@
 # Cryowala
 
 # Add Logo Image
-![Cryowala Logo](./app/logo.png)
+![Cryowala Logo](./public/logo.png)
 
 # Introduction
 This project aims to assist researchers work with cryogenic devices like quantum computers.
