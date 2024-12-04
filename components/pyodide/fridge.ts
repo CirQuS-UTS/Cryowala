@@ -1,5 +1,5 @@
 /* eslint-disable max-lines-per-function */
-import { FridgeConfig, SegmentConfig, StageConfig, Thermalisation, ThermalisationOptions, LineLoadOutput, NoiseData2DSweep, SweepResults2D } from "@/components/pyodide/fridge.d"
+import { FridgeConfig, SegmentConfig, StageConfig, Thermalisation, ThermalisationOptions, LineLoadOutput, NoiseData2DSweep, SweepResults2D, CableConfig, LineConfig } from "@/components/pyodide/fridge.d"
 import { CryoModelInterface, ThermalConductivity, ThermalScheme, LineData } from "@/components/pyodide/types.d"
 
 function isAuto(thermalisation: Thermalisation): boolean {
@@ -86,32 +86,60 @@ function getLineCables(fridge: FridgeConfig, lineId: string): FridgeConfig["cabl
     return cables;
 }
 
-function getLineCable(fridge: FridgeConfig, lineId: string): FridgeConfig["cables"][0] {
-    const cables = getLineCables(fridge, lineId);
+type Result = Record<string, number>;
+function collectCompositeLineResults(fridge: FridgeConfig, line: LineConfig, calculate: (cable: CableConfig) => Result): Result {
+    const cables = getLineCables(fridge, line.id);
+    const segments = getLineSegments(fridge, line.id);
 
-    if (cables.length !== 1) {
-        throw new Error(`Line ${lineId} has ${cables.length} cables. Only one cable is supported in this context.`);
+    // results grouped by cable id
+    const results: Record<string, Result> = {};
+    for (const cable of cables) {
+        results[cable.id] = calculate(cable);
     }
 
-    return cables[0];
-};
+    const stages = [...new Set(Object.values(results).flatMap(r => Object.keys(r)))];
+
+    const result: Result = {};
+    for (const stage of stages) {
+        const segment = segments.find(s => s.stageId === stage);
+
+        if (stage == "RT") {
+            // if the stage is RT, use the results for the first cable type as they should all be equal base on the current backend version
+            const cable = Object.keys(results)[0];
+            result[stage] = results[cable][stage];
+            continue;
+        }
+
+        // if there is no segment something is wrong with the fridge config, error out
+        if (!segment) throw new Error(`segment not found for stage ${stage} in line ${line.id}.`);
+
+        // lookup the result for this stage in the results for the cable type of this segment
+        result[stage] = results[segment.cableId][stage];
+    }
+
+    return result;
+}
 
 export function passiveDrive(model: CryoModelInterface, fridge: FridgeConfig): LineLoadOutput[] {
     const lines = fridge.lines.filter(l => l.signalType === "Drive");
     const results: LineLoadOutput[] = [];
     for (const line of lines) {
         const segments = getLineSegments(fridge, line.id);
-        const cable = getLineCable(fridge, line.id);
-        const cableDiameter = (cable.diameters[2] * 1e5).toFixed(0);
-        const thermalConductivity: ThermalConductivity = [cable.thermalConductivityValue, cableDiameter];
-        const output = model.passiveLoad(
-            fridge.stages.map(s => s.id),
-            cable.diameters,
-            segments.map(s => s.length),
-            fridge.stages.map(s => s.temperature),
-            [thermalConductivity, [0, cableDiameter], thermalConductivity], // (mitch): This probably shouldn't be hard coded, but I don't know how to determine what this should be.
-            getThermalScheme(fridge.stages, segments)
-        );
+
+        const output = collectCompositeLineResults(fridge, line, (cable) => {
+            const cableDiameter = (cable.diameters[2] * 1e5).toFixed(0);
+            const thermalConductivity: ThermalConductivity = [cable.thermalConductivityValue, cableDiameter];
+            const result = model.passiveLoad(
+                fridge.stages.map(s => s.id),
+                cable.diameters,
+                segments.map(s => s.length),
+                fridge.stages.map(s => s.temperature),
+                [thermalConductivity, [0, cableDiameter], thermalConductivity], // (mitch): This probably shouldn't be hard coded, but I don't know how to determine what this should be.
+                getThermalScheme(fridge.stages, segments)
+            );
+            return result;
+        });
+
         const result: LineLoadOutput = {
             output: output,
             line: line,
@@ -127,17 +155,21 @@ export function passiveFlux(model: CryoModelInterface, fridge: FridgeConfig): Li
     const results: LineLoadOutput[] = [];
     for (const line of lines) {
         const segments = getLineSegments(fridge, line.id);
-        const cable = getLineCable(fridge, line.id);
-        const cableDiameter = (cable.diameters[2] * 1e5).toFixed(0);
-        const thermalConductivity: ThermalConductivity = [cable.thermalConductivityValue, cableDiameter];
-        const output = model.passiveLoad(
-            fridge.stages.map(s => s.id),
-            cable.diameters,
-            segments.map(s => s.length),
-            fridge.stages.map(s => s.temperature),
-            [thermalConductivity, [0, cableDiameter], thermalConductivity], // Note(mitch): This probably shouldn't be hard coded, but I don't know how to determine what this should be.
-            getThermalScheme(fridge.stages, segments)
-        );
+
+        const output = collectCompositeLineResults(fridge, line, (cable) => {
+            const cableDiameter = (cable.diameters[2] * 1e5).toFixed(0);
+            const thermalConductivity: ThermalConductivity = [cable.thermalConductivityValue, cableDiameter];
+            const result = model.passiveLoad(
+                fridge.stages.map(s => s.id),
+                cable.diameters,
+                segments.map(s => s.length),
+                fridge.stages.map(s => s.temperature),
+                [thermalConductivity, [0, cableDiameter], thermalConductivity], // (mitch): This probably shouldn't be hard coded, but I don't know how to determine what this should be.
+                getThermalScheme(fridge.stages, segments)
+            );
+            return result;
+        });
+
         const result: LineLoadOutput = {
             output: output,
             line: line,
@@ -151,14 +183,14 @@ export function passiveFlux(model: CryoModelInterface, fridge: FridgeConfig): Li
 export function passiveOutput(model: CryoModelInterface, fridge: FridgeConfig): LineLoadOutput[] {
     const lines = fridge.lines.filter(l => l.signalType === "Output");
     const results: LineLoadOutput[] = [];
+
     for (const line of lines) {
         const segments = getLineSegments(fridge, line.id);
-        const cables = getLineCables(fridge, line.id);
-        const cableResults: Record<string, Record<string, number>> = {};
-        for (const cable of cables) {
+
+        const output = collectCompositeLineResults(fridge, line, (cable) => {
             const cableDiameter = (cable.diameters[2] * 1e5).toFixed(0);
             const thermalConductivity: ThermalConductivity = [cable.thermalConductivityValue, cableDiameter];
-            const output = model.passiveLoad(
+            const result = model.passiveLoad(
                 fridge.stages.map(s => s.id),
                 cable.diameters,
                 segments.map(s => s.length),
@@ -166,18 +198,11 @@ export function passiveOutput(model: CryoModelInterface, fridge: FridgeConfig): 
                 [thermalConductivity, [0, cableDiameter], thermalConductivity], // Note(mitch): This probably shouldn't be hard coded, but I don't know how to determine what this should be.
                 getThermalScheme(fridge.stages, segments)
             );
-            cableResults[cable.id] = output;
-        }
-        const sumSegments: Record<string, number> = {};
-        for (const stage of fridge.stages) {
-            const segment = segments.find(s => s.stageId === stage.id);
-            if (!segment) {
-                throw new Error(`No segment found for stage ${stage.id} in line ${line.id}.`);
-            }
-            sumSegments[stage.id] = (sumSegments[stage.id] ?? 0) + cableResults[segment.cableId][stage.id];
-        }
+            return result;
+        });
+
         const result: LineLoadOutput = {
-            output: sumSegments,
+            output: output,
             line: line,
             type: 'Passive'
         }
@@ -191,15 +216,21 @@ export function activeDrive(model: CryoModelInterface, fridge: FridgeConfig): Li
     const results: LineLoadOutput[] = [];
     for (const line of lines) {
         const segments = getLineSegments(fridge, line.id);
-        const cable = getLineCable(fridge, line.id);
-        const output = model.activeLoadAC(
-            fridge.stages.map(s => s.id),
-            segments.map(s => s.length),
-            segments.map(s => s.attenuation),
-            cable.bivariateCableData,
-            line.signalPower,
-            line.signalFrequency
-        );
+        
+        const output = collectCompositeLineResults(fridge, line, (cable) => {
+            const cableDiameter = (cable.diameters[2] * 1e5).toFixed(0);
+            const thermalConductivity: ThermalConductivity = [cable.thermalConductivityValue, cableDiameter];
+            const result = model.activeLoadAC(
+                fridge.stages.map(s => s.id),
+                segments.map(s => s.length),
+                segments.map(s => s.attenuation),
+                cable.bivariateCableData,
+                line.signalPower,
+                line.signalFrequency
+            );
+            return result;
+        });
+
         for (const stage of fridge.stages) {
             output[stage.id] *= 0.33; // (mitch): This is a hard coding on Adrien's logic, I don't really know how I am mean to generate this information.
         }
@@ -218,15 +249,21 @@ export function activeFlux(model: CryoModelInterface, fridge: FridgeConfig): Lin
     const results: LineLoadOutput[] = [];
     for (const line of lines) {
         const segments = getLineSegments(fridge, line.id);
-        const cable = getLineCable(fridge, line.id);
-        const output = model.activeLoadDC(
-            fridge.stages.map(s => s.id),
-            cable.diameters,
-            segments.map(s => s.length),
-            segments.map(s => s.attenuation),
-            line.inputCurrent,
-            cable.rho
-        );
+
+        const output = collectCompositeLineResults(fridge, line, (cable) => {
+            const cableDiameter = (cable.diameters[2] * 1e5).toFixed(0);
+            const thermalConductivity: ThermalConductivity = [cable.thermalConductivityValue, cableDiameter];
+            const result = model.activeLoadDC(
+                fridge.stages.map(s => s.id),
+                cable.diameters,
+                segments.map(s => s.length),
+                segments.map(s => s.attenuation),
+                line.inputCurrent,
+                cable.rho
+            );
+            return result;
+        });
+
         for (const stage of fridge.stages) {
             output[stage.id] *= 1; // (mitch): This is a hard coding on Adrien's logic, I don't really know how I am mean to generate this information.
         }
@@ -246,16 +283,17 @@ export function driveNoise(model: CryoModelInterface, fridge: FridgeConfig): Rec
     const results: Record<string, number> = {};
     for (const line of lines) {
         const segments = getLineSegments(fridge, line.id);
-        const cable = getLineCable(fridge, line.id);
 
-        const result = model.driveNoise(
-            fridge.stages.map(s => s.id),
-            segments.map(s => s.length),
-            fridge.stages.map(s => s.temperature),
-            segments.map(s => s.attenuation),
-            cable.bivariateCableData,
-            line.signalFrequency
-        );
+        const result = collectCompositeLineResults(fridge, line, (cable) => {
+            return model.driveNoise(
+                fridge.stages.map(s => s.id),
+                segments.map(s => s.length),
+                fridge.stages.map(s => s.temperature),
+                segments.map(s => s.attenuation),
+                cable.bivariateCableData,
+                line.signalFrequency
+            );
+        });
 
         for (const stage of Object.keys(result)) {
             results[stage] = (results[stage] ?? 0) + result[stage]
@@ -271,16 +309,17 @@ export function fluxNoise(model: CryoModelInterface, fridge: FridgeConfig): Reco
     const results: Record<string, number> = {};
     for (const line of lines) {
         const segments = getLineSegments(fridge, line.id);
-        const cable = getLineCable(fridge, line.id);
-
-        const result = model.fluxNoise(
-            fridge.stages.map(s => s.id),
-            segments.map(s => s.length),
-            fridge.stages.map(s => s.temperature),
-            segments.map(s => s.attenuation),
-            cable.bivariateCableData,
-            line.signalFrequency
-        );
+        
+        const result = collectCompositeLineResults(fridge, line, (cable) => {
+            return model.fluxNoise(
+                fridge.stages.map(s => s.id),
+                segments.map(s => s.length),
+                fridge.stages.map(s => s.temperature),
+                segments.map(s => s.attenuation),
+                cable.bivariateCableData,
+                line.signalFrequency
+            );
+        });
 
         for (const stage of Object.keys(result)) {
             results[stage] = (results[stage] ?? 0) + result[stage]
